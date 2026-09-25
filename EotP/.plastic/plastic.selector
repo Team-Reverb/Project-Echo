@@ -1,4 +1,3 @@
 repository "EotP/EotP@3573534261372@cloud"
   path "/"
-    br "/main"
-    co "/main"
+    smartbranch "/main/Ian Branch"
