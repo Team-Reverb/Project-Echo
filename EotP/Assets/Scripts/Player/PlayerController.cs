@@ -12,11 +12,11 @@ public class PlayerController : MonoBehaviour
     [Header("Input Bindings")]
     public KeyCode pulseKey = KeyCode.E;
 
-    private Rigidbody rb;
+    private Rigidbody2D rb;
 
     void Awake()
     {
-        rb = GetComponent<Rigidbody>();
+        rb = GetComponent<Rigidbody2D>();
     }
 
     // Update is called once per frame
@@ -31,7 +31,7 @@ public class PlayerController : MonoBehaviour
     {
         float horizontal = Input.GetAxis("Horizontal");
 
-        Vector3 velocity = rb.linearVelocity;
+        Vector2 velocity = rb.linearVelocity;
         velocity.x = horizontal * moveSpeed;
         rb.linearVelocity = velocity;
 
@@ -47,7 +47,7 @@ public class PlayerController : MonoBehaviour
     {
         if (Input.GetButtonDown("Jump") && isGrounded)
         {
-            Vector3 velocity = rb.linearVelocity;
+            Vector2 velocity = rb.linearVelocity;
             velocity.y = jumpForce;
             rb.linearVelocity = velocity;
         }
@@ -66,7 +66,7 @@ public class PlayerController : MonoBehaviour
         Debug.Log(feature + " input detected");
     }
 
-    void OnCollisionEnter(Collision collision)
+    void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Ground"))
         {
@@ -74,7 +74,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void OnCollisionExit(Collision collision)
+    void OnCollisionExit2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Ground"))
         {
