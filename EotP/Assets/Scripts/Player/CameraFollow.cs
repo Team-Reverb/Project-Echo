@@ -7,7 +7,6 @@ public class CameraFollow : MonoBehaviour
 
     [Header("Framing")]
     public float heightOffset = 2f;
-    public float distance = -10f;
 
     [Header("Smoothing")]
     public float smoothTime = 0.15f;
@@ -21,7 +20,7 @@ public class CameraFollow : MonoBehaviour
         Vector3 targetPosition = new Vector3(
             target.position.x,
             target.position.y + heightOffset,
-            target.position.z + distance
+            transform.position.z
         );
 
         transform.position = Vector3.SmoothDamp(transform.position, targetPosition, ref velocity, smoothTime);
