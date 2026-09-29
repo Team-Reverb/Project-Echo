@@ -59,6 +59,9 @@ ExportedObj/
 *.opendb
 *.VC.db
 
+# Unity Version Control (Plastic) — team uses Git instead
+.plastic/
+
 # Unity3D generated meta files
 *.pidb.meta
 *.pdb.meta

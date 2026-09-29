@@ -1,3 +1,0 @@
-repository "EotP/EotP@3573534261372@cloud"
-  path "/"
-    smartbranch "/main"
