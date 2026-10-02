@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3855408032664342523}
   - component: {fileID: 5065885874501573686}
   - component: {fileID: 7683509919350955944}
-  - component: {fileID: 2332501576353212802}
+  - component: {fileID: 2137923155889187701}
   m_Layer: 0
   m_Name: Player Prototype 1
   m_TagString: Untagged
@@ -159,7 +159,7 @@ CapsuleCollider2D:
   m_Offset: {x: 0, y: 0}
   m_Size: {x: 1, y: 2}
   m_Direction: 0
---- !u!114 &2332501576353212802
+--- !u!114 &2137923155889187701
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

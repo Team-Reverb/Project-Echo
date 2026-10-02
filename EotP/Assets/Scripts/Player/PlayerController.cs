@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
@@ -9,43 +10,67 @@ public class PlayerController : MonoBehaviour
     [Header("State")]
     public bool isGrounded;
 
-    [Header("Input Bindings")]
-    public KeyCode pulseKey = KeyCode.E;
-
     private Rigidbody2D rb;
+    private PlayerControls controls;
+    private float moveInput;
 
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        controls = new PlayerControls();
+    }
+
+    void OnEnable()
+    {
+        controls.Player.Move.performed += OnMove;
+        controls.Player.Move.canceled += OnMove;
+        controls.Player.Jump.performed += OnJump;
+        controls.Player.Pulse.performed += OnPulse;
+        controls.Player.Enable();
+    }
+
+    void OnDisable()
+    {
+        controls.Player.Move.performed -= OnMove;
+        controls.Player.Move.canceled -= OnMove;
+        controls.Player.Jump.performed -= OnJump;
+        controls.Player.Pulse.performed -= OnPulse;
+        controls.Player.Disable();
+    }
+
+    void FixedUpdate()
+    {
+        HandleMovement();
     }
 
     // Update is called once per frame
     void Update()
     {
-        HandleMovement();
-        HandleJump();
-        HandlePulseInput();
+
     }
 
     void HandleMovement()
     {
-        float horizontal = Input.GetAxis("Horizontal");
-
         Vector2 velocity = rb.linearVelocity;
-        velocity.x = horizontal * moveSpeed;
+        velocity.x = moveInput * moveSpeed;
         rb.linearVelocity = velocity;
 
-        if (horizontal != 0f)
+        if (moveInput != 0f)
         {
             Vector3 scale = transform.localScale;
-            scale.x = Mathf.Abs(scale.x) * Mathf.Sign(horizontal);
+            scale.x = Mathf.Abs(scale.x) * Mathf.Sign(moveInput);
             transform.localScale = scale;
         }
     }
 
-    void HandleJump()
+    void OnMove(InputAction.CallbackContext context)
     {
-        if (Input.GetButtonDown("Jump") && isGrounded)
+        moveInput = context.ReadValue<float>();
+    }
+
+    void OnJump(InputAction.CallbackContext context)
+    {
+        if (isGrounded)
         {
             Vector2 velocity = rb.linearVelocity;
             velocity.y = jumpForce;
@@ -53,12 +78,9 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void HandlePulseInput()
+    void OnPulse(InputAction.CallbackContext context)
     {
-        if (Input.GetKeyDown(pulseKey))
-        {
-            FeaturePlaceholderLog("Pulse");
-        }
+        FeaturePlaceholderLog("Pulse");
     }
 
     void FeaturePlaceholderLog(string feature)
