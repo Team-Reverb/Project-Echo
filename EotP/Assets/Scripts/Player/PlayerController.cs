@@ -10,14 +10,39 @@ public class PlayerController : MonoBehaviour
     [Header("State")]
     public bool isGrounded;
 
+    [Header("Health")]
+    public float maxHealth = 100f;
+    public float currentHealth;
+
+    [Header("Pulse Cooldown")]
+    public float pulseCooldownDefault = 1f;
+    public float pulseCooldownCombat = 5f;
+
+    private bool isInCombat;
+    private float pulseCooldownTimer;
+    private float pulseCooldownDuration;
+
     private Rigidbody2D rb;
     private PlayerControls controls;
     private float moveInput;
+
+    // Read-only values for other systems to use
+    public float HealthNormalized => maxHealth > 0 ? currentHealth / maxHealth : 0f;
+    public bool IsPulseReady => pulseCooldownTimer <= 0f;
+    public float PulseCooldownNormalized => pulseCooldownDuration > 0f ? Mathf.Clamp01(pulseCooldownTimer / pulseCooldownDuration) : 0f;
+    public bool IsInCombat => isInCombat;
 
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         controls = new PlayerControls();
+        currentHealth = maxHealth;
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        HandlePulseCooldownTimer();
     }
 
     void OnEnable()
@@ -41,12 +66,6 @@ public class PlayerController : MonoBehaviour
     void FixedUpdate()
     {
         HandleMovement();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
     }
 
     void HandleMovement()
@@ -80,7 +99,46 @@ public class PlayerController : MonoBehaviour
 
     void OnPulse(InputAction.CallbackContext context)
     {
+        if (!IsPulseReady)
+        {
+            Debug.Log("Pulse on cooldown. " + pulseCooldownTimer + " seconds left.");
+            return;
+        }
+
         FeaturePlaceholderLog("Pulse");
+
+        if (isInCombat)
+        {
+            pulseCooldownDuration = pulseCooldownCombat;
+        }
+        else
+        {
+            pulseCooldownDuration = pulseCooldownDefault;
+        }
+        pulseCooldownTimer = pulseCooldownDuration;
+    }
+
+    void HandlePulseCooldownTimer()
+    {
+        if (pulseCooldownTimer > 0f)
+        {
+            pulseCooldownTimer -= Time.deltaTime;
+        }
+    }
+
+    public void TakeDamage(int amount)
+    {
+        currentHealth = Mathf.Max(currentHealth - amount, 0);
+    }
+
+    public void Heal(int amount)
+    {
+        currentHealth = Mathf.Min(currentHealth + amount, maxHealth);
+    }
+
+    public void SetInCombat(bool value)
+    {
+        isInCombat = value;
     }
 
     void FeaturePlaceholderLog(string feature)
@@ -103,4 +161,15 @@ public class PlayerController : MonoBehaviour
             isGrounded = false;
         }
     }
+
+    // Debug functions
+
+    [ContextMenu("Debug: Take 10 Damage")]
+    void DebugTakeDamage() => TakeDamage(10);
+
+    [ContextMenu("Debug: Heal 10")]
+    void DebugHeal() => Heal(10);
+
+    [ContextMenu("Debug: Toggle Combat State")]
+    void DebugToggleCombat() => SetInCombat(!isInCombat);
 }
