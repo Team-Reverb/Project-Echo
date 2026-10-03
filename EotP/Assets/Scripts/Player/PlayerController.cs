@@ -8,7 +8,7 @@ public class PlayerController : MonoBehaviour
 
     [Header("Jump Variables")]
     public float tapJumpForce = 6f;
-    public float heldJumpForce = 9f;
+    public float heldJumpForce = 6f;
     public float holdThreshold = 0.2f;
 
     [Header("State")]
@@ -101,23 +101,20 @@ public class PlayerController : MonoBehaviour
             if (isGrounded)
             {
                 jumpPressTime = Time.time;
+
+                Vector2 velocity = rb.linearVelocity;
+                velocity.y = tapJumpForce;
+                rb.linearVelocity = velocity;
             }
         }
         else if (context.phase == InputActionPhase.Canceled)
         {
             if (jumpPressTime < 0f) return;
 
-            float heldDuration = Time.time - jumpPressTime;
-            if (heldDuration >= holdThreshold)
+            if (Time.time - jumpPressTime >= holdThreshold)
             {
                 Vector2 velocity = rb.linearVelocity;
                 velocity.y = heldJumpForce;
-                rb.linearVelocity = velocity;
-            }
-            else
-            {
-                Vector2 velocity = rb.linearVelocity;
-                velocity.y = tapJumpForce;
                 rb.linearVelocity = velocity;
             }
 
