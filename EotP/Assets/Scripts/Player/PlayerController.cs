@@ -8,7 +8,7 @@ public class PlayerController : MonoBehaviour
 
     [Header("Jump Variables")]
     public float tapJumpForce = 6f;
-    public float heldJumpForce = 3f;
+    public float heldJumpForce = 6f;
     public float holdThreshold = 0.2f;
 
     [Header("State")]
@@ -22,10 +22,15 @@ public class PlayerController : MonoBehaviour
     public float pulseCooldownDefault = 1f;
     public float pulseCooldownCombat = 5f;
 
+    [Header("State Machine")]
+    public float actionStateDuration = 0.3f;
+
     private bool isInCombat;
     private float pulseCooldownTimer;
     private float pulseCooldownDuration;
     private float jumpPressTime = -1f;
+    private float actionStateTimer;
+    private CharacterState currentState = CharacterState.Idle;
 
     private Rigidbody2D rb;
     private PlayerControls controls;
@@ -36,6 +41,7 @@ public class PlayerController : MonoBehaviour
     public bool IsPulseReady => pulseCooldownTimer <= 0f;
     public float PulseCooldownNormalized => pulseCooldownDuration > 0f ? Mathf.Clamp01(pulseCooldownTimer / pulseCooldownDuration) : 0f;
     public bool IsInCombat => isInCombat;
+    public CharacterState CurrentState => currentState;
 
     void Awake()
     {
@@ -48,6 +54,12 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         HandlePulseCooldownTimer();
+        HandleActionStateTimer();
+
+        if (actionStateTimer <= 0f)
+        {
+            UpdateMovementState();
+        }
     }
 
     void OnEnable()
@@ -129,11 +141,13 @@ public class PlayerController : MonoBehaviour
     void OnAttack(InputAction.CallbackContext context)
     {
         FeaturePlaceholderLog("Attack");
+        EnterActionState(CharacterState.Attacking);
     }
 
     void OnInteract(InputAction.CallbackContext context)
     {
         FeaturePlaceholderLog("Interact");
+        EnterActionState(CharacterState.Interacting);
     }
 
     void OnPulse(InputAction.CallbackContext context)
@@ -155,6 +169,8 @@ public class PlayerController : MonoBehaviour
             pulseCooldownDuration = pulseCooldownDefault;
         }
         pulseCooldownTimer = pulseCooldownDuration;
+
+        EnterActionState(CharacterState.Pulsing);
     }
 
     void HandlePulseCooldownTimer()
@@ -163,6 +179,43 @@ public class PlayerController : MonoBehaviour
         {
             pulseCooldownTimer -= Time.deltaTime;
         }
+    }
+
+    void HandleActionStateTimer()
+    {
+        if (actionStateTimer > 0f)
+        {
+            actionStateTimer -= Time.deltaTime;
+        }
+    }
+
+    void UpdateMovementState()
+    {
+        if (!isGrounded)
+        {
+            if (rb.linearVelocity.y > 0f)
+            {
+                currentState = CharacterState.Jumping;
+            }
+            else
+            {
+                currentState = CharacterState.Falling;
+            }
+        }
+        else if (Mathf.Abs(moveInput) > 0.01f)
+        {
+            currentState = CharacterState.Walking;
+        }
+        else
+        {
+            currentState = CharacterState.Idle;
+        }
+    }
+
+    void EnterActionState(CharacterState state)
+    {
+        currentState = state;
+        actionStateTimer = actionStateDuration;
     }
 
     public void TakeDamage(int amount)
