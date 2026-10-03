@@ -12,7 +12,7 @@ public class EnemyAgent : Agent
     [SerializeField] private float _moveSpeed = 1.5f;
     [SerializeField] private float _rotationSpeed = 180f;
 
-    private Renderer _renderer;
+    private SpriteRenderer _renderer;
 
     private int _currentEpisode = 0;
     private float _cumulativeReward = 0f;
@@ -22,7 +22,7 @@ public class EnemyAgent : Agent
     {
         Debug.Log("Initialize()");
 
-        _renderer = GetComponent<Renderer>();
+        _renderer = GetComponent<SpriteRenderer>();
         _currentEpisode = 0;
         _cumulativeReward = 0f;
 
@@ -36,7 +36,7 @@ public class EnemyAgent : Agent
 
         _currentEpisode++;
         _cumulativeReward = 0f;
-        _renderer.material.color = Color.blue;
+        _renderer.color = Color.blue;
 
         SpawnObjects();
 
@@ -102,7 +102,7 @@ public class EnemyAgent : Agent
 
     }
 
-    public void OnTriggerEnter(Collider other)
+    public void OnTriggerEnter2D(Collider2D other)
     {
         if (other.gameObject.CompareTag("Goal"))
         {
@@ -116,5 +116,38 @@ public class EnemyAgent : Agent
         _cumulativeReward = GetCumulativeReward();
 
         EndEpisode();
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Wall"))
+        {
+            AddReward(-0.05f);
+
+            if (_renderer != null)
+            {
+
+                _renderer.color = Color.red;
+            }
+        }
+    }
+
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Wall"))
+        {
+            AddReward(-0.01f * Time.fixedDeltaTime);
+        }
+    }
+
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Wall"))
+        {
+            if (_renderer != null)
+            {
+                _renderer.color = Color.blue;
+            }
+        }
     }
 }
