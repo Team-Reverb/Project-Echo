@@ -172,6 +172,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   moveSpeed: 6
-  jumpForce: 6
+  tapJumpForce: 6
+  heldJumpForce: 6
+  holdThreshold: 0.2
   isGrounded: 0
-  pulseKey: 101
+  maxHealth: 100
+  currentHealth: 0
+  pulseCooldownDefault: 1
+  pulseCooldownCombat: 5

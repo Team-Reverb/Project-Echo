@@ -8,7 +8,7 @@ public class PlayerController : MonoBehaviour
 
     [Header("Jump Variables")]
     public float tapJumpForce = 6f;
-    public float heldJumpForce = 6f;
+    public float heldJumpForce = 3f;
     public float holdThreshold = 0.2f;
 
     [Header("State")]
@@ -57,6 +57,8 @@ public class PlayerController : MonoBehaviour
         controls.Player.Jump.started += OnJump;
         controls.Player.Jump.canceled += OnJump;
         controls.Player.Pulse.performed += OnPulse;
+        controls.Player.Interact.performed += OnInteract;
+        controls.Player.Attack.performed += OnAttack;
         controls.Player.Enable();
     }
 
@@ -67,6 +69,8 @@ public class PlayerController : MonoBehaviour
         controls.Player.Jump.started -= OnJump;
         controls.Player.Jump.canceled -= OnJump;
         controls.Player.Pulse.performed -= OnPulse;
+        controls.Player.Interact.performed -= OnInteract;
+        controls.Player.Attack.performed -= OnAttack;
         controls.Player.Disable();
     }
 
@@ -120,6 +124,16 @@ public class PlayerController : MonoBehaviour
 
             jumpPressTime = -1f;
         }
+    }
+
+    void OnAttack(InputAction.CallbackContext context)
+    {
+        FeaturePlaceholderLog("Attack");
+    }
+
+    void OnInteract(InputAction.CallbackContext context)
+    {
+        FeaturePlaceholderLog("Interact");
     }
 
     void OnPulse(InputAction.CallbackContext context)
