@@ -5,7 +5,11 @@ public class PlayerController : MonoBehaviour
 {
     [Header("Movement Variables")]
     public float moveSpeed = 6f;
-    public float jumpForce = 6f;
+
+    [Header("Jump Variables")]
+    public float tapJumpForce = 6f;
+    public float heldJumpForce = 9f;
+    public float holdThreshold = 0.2f;
 
     [Header("State")]
     public bool isGrounded;
@@ -21,6 +25,7 @@ public class PlayerController : MonoBehaviour
     private bool isInCombat;
     private float pulseCooldownTimer;
     private float pulseCooldownDuration;
+    private float jumpPressTime = -1f;
 
     private Rigidbody2D rb;
     private PlayerControls controls;
@@ -49,7 +54,8 @@ public class PlayerController : MonoBehaviour
     {
         controls.Player.Move.performed += OnMove;
         controls.Player.Move.canceled += OnMove;
-        controls.Player.Jump.performed += OnJump;
+        controls.Player.Jump.started += OnJump;
+        controls.Player.Jump.canceled += OnJump;
         controls.Player.Pulse.performed += OnPulse;
         controls.Player.Enable();
     }
@@ -58,7 +64,8 @@ public class PlayerController : MonoBehaviour
     {
         controls.Player.Move.performed -= OnMove;
         controls.Player.Move.canceled -= OnMove;
-        controls.Player.Jump.performed -= OnJump;
+        controls.Player.Jump.started -= OnJump;
+        controls.Player.Jump.canceled -= OnJump;
         controls.Player.Pulse.performed -= OnPulse;
         controls.Player.Disable();
     }
@@ -89,11 +96,32 @@ public class PlayerController : MonoBehaviour
 
     void OnJump(InputAction.CallbackContext context)
     {
-        if (isGrounded)
+        if (context.phase == InputActionPhase.Started)
         {
-            Vector2 velocity = rb.linearVelocity;
-            velocity.y = jumpForce;
-            rb.linearVelocity = velocity;
+            if (isGrounded)
+            {
+                jumpPressTime = Time.time;
+            }
+        }
+        else if (context.phase == InputActionPhase.Canceled)
+        {
+            if (jumpPressTime < 0f) return;
+
+            float heldDuration = Time.time - jumpPressTime;
+            if (heldDuration >= holdThreshold)
+            {
+                Vector2 velocity = rb.linearVelocity;
+                velocity.y = heldJumpForce;
+                rb.linearVelocity = velocity;
+            }
+            else
+            {
+                Vector2 velocity = rb.linearVelocity;
+                velocity.y = tapJumpForce;
+                rb.linearVelocity = velocity;
+            }
+
+            jumpPressTime = -1f;
         }
     }
 
