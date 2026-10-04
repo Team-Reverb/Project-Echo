@@ -10,8 +10,8 @@ public class PulseCooldownUI : MonoBehaviour
     public CanvasGroup canvasGroup;
 
     [Header("Combat Outline Flash")]
-    public float flashSpeed = 4f;
-    public float minOutlineAlpha = 0f;
+    public float flashSpeed = 2f;
+    public float minOutlineAlpha = 0.2f;
     public float maxOutlineAlpha = 0.8f;
 
     [Header("Unavailable Transparency")]
@@ -31,7 +31,7 @@ public class PulseCooldownUI : MonoBehaviour
     {
         if (cooldownFillImage == null) return;
 
-        cooldownFillImage.fillAmount = player.PulseCooldownNormalized;
+        cooldownFillImage.fillAmount = 1f - player.PulseCooldownNormalized;
     }
 
     void UpdateCombatOutline()
