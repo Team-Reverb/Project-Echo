@@ -14,8 +14,8 @@ public class EnemyAgent : Agent
 
     private SpriteRenderer _renderer;
 
-    private int _currentEpisode = 0;
-    private float _cumulativeReward = 0f;
+    public int CurrentEpisode = 0;
+    public float CumulativeReward = 0f;
 
 
     public override void Initialize()
@@ -23,8 +23,8 @@ public class EnemyAgent : Agent
         Debug.Log("Initialize()");
 
         _renderer = GetComponent<SpriteRenderer>();
-        _currentEpisode = 0;
-        _cumulativeReward = 0f;
+        CurrentEpisode = 0;
+        CumulativeReward = 0f;
 
         
     }
@@ -34,8 +34,8 @@ public class EnemyAgent : Agent
         
         Debug.Log("OnEpisodeBegin()");
 
-        _currentEpisode++;
-        _cumulativeReward = 0f;
+        CurrentEpisode++;
+        CumulativeReward = 0f;
         _renderer.color = Color.blue;
 
         SpawnObjects();
@@ -71,13 +71,33 @@ public class EnemyAgent : Agent
 
     }
 
+     public override void Heuristic(in ActionBuffers actionsOut)
+    {
+        var discreteActionsOut = actionsOut.DiscreteActions;
+
+        discreteActionsOut[0] = 0;
+
+        if (Input.GetKey(KeyCode.UpArrow))
+        {
+            discreteActionsOut[0] = 1;
+        }
+        else if (Input.GetKey(KeyCode.LeftArrow))
+        {
+            discreteActionsOut[0] = 2;
+        }
+        else if (Input.GetKey(KeyCode.RightArrow))
+        {
+            discreteActionsOut[0] = 3;
+        }
+    }
+
     public override void OnActionReceived(ActionBuffers actions)
     {
         MoveAgent(actions.DiscreteActions);
 
         AddReward(-2f / MaxStep);
 
-        _cumulativeReward = GetCumulativeReward();
+        CumulativeReward = GetCumulativeReward();
     }
 
     public void MoveAgent(ActionSegment<int> act)
@@ -113,7 +133,7 @@ public class EnemyAgent : Agent
     private void GoalReached()
     {
         AddReward(1.0f);
-        _cumulativeReward = GetCumulativeReward();
+        CumulativeReward = GetCumulativeReward();
 
         EndEpisode();
     }
