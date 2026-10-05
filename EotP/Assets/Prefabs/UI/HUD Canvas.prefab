@@ -145,7 +145,7 @@ MonoBehaviour:
   flashSpeed: 4
   minOutlineAlpha: 0.2
   maxOutlineAlpha: 1
-  unavailableAlpha: 0.4
+  unavailableAlpha: 0.2
 --- !u!1 &1882101897996587503
 GameObject:
   m_ObjectHideFlags: 0
