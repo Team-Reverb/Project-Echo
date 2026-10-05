@@ -171,6 +171,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c02ecbb595768604b9fcdf6c66298855, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
+  echoPulsePrefab: {fileID: 8821353449132841125, guid: 32a2d3f314526334799328a73f99350c, type: 3}
   moveSpeed: 6
   tapJumpForce: 6
   heldJumpForce: 6
@@ -180,3 +181,4 @@ MonoBehaviour:
   currentHealth: 0
   pulseCooldownDefault: 1
   pulseCooldownCombat: 5
+  actionStateDuration: 0.3

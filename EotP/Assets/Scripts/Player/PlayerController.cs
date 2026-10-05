@@ -3,6 +3,9 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
+
+    [SerializeField] private EchoPulse echoPulsePrefab;
+
     [Header("Movement Variables")]
     public float moveSpeed = 6f;
 
@@ -159,6 +162,7 @@ public class PlayerController : MonoBehaviour
         }
 
         FeaturePlaceholderLog("Pulse");
+        Instantiate(echoPulsePrefab, transform.position, Quaternion.identity);
 
         if (isInCombat)
         {
