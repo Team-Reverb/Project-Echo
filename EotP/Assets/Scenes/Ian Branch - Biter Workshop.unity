@@ -204,7 +204,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b3caddebecd0c614b8a59124bffc29f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BiterGoalRunnerBehaviour
-  Speed: 10
+  Speed: 6
 --- !u!1 &1343000639
 GameObject:
   m_ObjectHideFlags: 0
@@ -412,7 +412,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 853267319}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3a5c9d521e5ef4759a8246a07d52221e, type: 3}
   m_Name: 
@@ -437,7 +437,7 @@ MonoBehaviour:
   hasUpgradedFromAgentParameters: 1
   MaxStep: 5000
   _goal: {fileID: 971700357}
-  _moveSpeed: 3
+  _moveSpeed: 5
   _rotationSpeed: 180
   CurrentEpisode: 0
   CumulativeReward: 0
@@ -470,7 +470,7 @@ MonoBehaviour:
     hasUpgradedBrainParametersWithActionSpec: 1
   m_Model: {fileID: 0}
   m_InferenceDevice: 0
-  m_BehaviorType: 1
+  m_BehaviorType: 0
   m_BehaviorName: BiterAgent
   TeamId: 0
   m_UseChildSensors: 1
@@ -535,7 +535,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2140512490759283313, guid: bcded1026605291409a526c83285b017, type: 3}
       propertyPath: m_ExcludeLayers.m_Bits
-      value: 64
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2352390511725016865, guid: bcded1026605291409a526c83285b017, type: 3}
       propertyPath: m_Layer

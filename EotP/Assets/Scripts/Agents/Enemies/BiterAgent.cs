@@ -158,6 +158,7 @@ public class BiterAgent : Agent
 
     private void RandomizeGoal()
     {
+        Debug.Log("Randomizing");
         int[] vals = { -7, 0, 7 };
 
         int x = vals[Random.Range(0, 2)];
@@ -165,7 +166,7 @@ public class BiterAgent : Agent
 
         Vector2 goalPosition = new Vector2(x, y);
 
-        _goal.transform.localPosition = goalPosition;
+        _goal.transform.position = goalPosition;
     }
 
     public override void CollectObservations(VectorSensor sensor)
@@ -241,14 +242,19 @@ public class BiterAgent : Agent
                 transform.Rotate(0f, 0f, _rotationSpeed * Time.deltaTime);
                 break;
             case 4:
-                float newBackAccel = _moveSpeed * Time.deltaTime;
-                if (_acceleration - newBackAccel > 0) _acceleration -= newBackAccel;
+                
+                float newBackAccel = -_acceleration * _moveSpeed * Time.deltaTime;
+                
+                    _acceleration += newBackAccel; Debug.Log("Case4");
+                
+              
                 break;
 
         }
 
     }
 
+    /*
     public void OnTriggerEnter2D(Collider2D other)
     {
         if (other.gameObject.CompareTag("Goal"))
@@ -256,7 +262,7 @@ public class BiterAgent : Agent
             GoalReached();
         }
     }
-
+    */
     private void GoalReached()
     {
         AddReward(1.0f);
@@ -279,6 +285,10 @@ public class BiterAgent : Agent
 
                 _renderer.color = Color.red;
             }
+        }
+        else if (collision.gameObject.CompareTag("Goal"))
+        {
+            GoalReached();
         }
     }
 
