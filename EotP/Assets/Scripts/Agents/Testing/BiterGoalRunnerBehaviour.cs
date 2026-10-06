@@ -34,10 +34,11 @@ public class BiterGoalRunnerBehaviour : MonoBehaviour
 
     private Vector2 RandomGoal()
     {
-        int[] vals = {-7, 0, 7 };
+        int[] yvals = {-8, 0, 8 };
+        float[] xvals = { -8.5f, 0, 8.5f };
 
-        int x = vals[Random.Range(0, 2)];
-        int y = vals[Random.Range(0, 2)];
+        float x = xvals[Random.Range(0, 2)];
+        int y = yvals[Random.Range(0, 2)];
 
         return new Vector2(x, y);
     }
