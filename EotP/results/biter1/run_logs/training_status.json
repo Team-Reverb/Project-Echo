@@ -1,0 +1,29 @@
+{
+    "BiterAgent": {
+        "checkpoints": [
+            {
+                "steps": 71128,
+                "file_path": "results\\biter1\\BiterAgent\\BiterAgent-71128.onnx",
+                "reward": 3.1370205134153366,
+                "creation_time": 1791273020.6112595,
+                "auxillary_file_paths": [
+                    "results\\biter1\\BiterAgent\\BiterAgent-71128.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 71128,
+            "file_path": "results\\biter1\\BiterAgent.onnx",
+            "reward": 3.1370205134153366,
+            "creation_time": 1791273020.6112595,
+            "auxillary_file_paths": [
+                "results\\biter1\\BiterAgent\\BiterAgent-71128.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "1.1.0",
+        "torch_version": "2.2.2+cu121"
+    }
+}
