@@ -10,9 +10,9 @@ public class PlayerController : MonoBehaviour
     public float moveSpeed = 6f;
 
     [Header("Jump Variables")]
-    public float tapJumpForce = 6f;
-    public float heldJumpForce = 6f;
-    public float holdThreshold = 0.2f;
+    public float tapJumpForce = 15f;
+    public float heldJumpForce = 20f;
+    public float holdThreshold = 0.3f;
 
     [Header("State")]
     public bool isGrounded;

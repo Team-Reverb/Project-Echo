@@ -110,7 +110,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDamping: 0
   m_AngularDamping: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 3
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -173,9 +173,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   echoPulsePrefab: {fileID: 8821353449132841125, guid: 32a2d3f314526334799328a73f99350c, type: 3}
   moveSpeed: 6
-  tapJumpForce: 6
-  heldJumpForce: 9
-  holdThreshold: 0.2
+  tapJumpForce: 15
+  heldJumpForce: 20
+  holdThreshold: 0.3
   isGrounded: 0
   maxHealth: 100
   currentHealth: 0
