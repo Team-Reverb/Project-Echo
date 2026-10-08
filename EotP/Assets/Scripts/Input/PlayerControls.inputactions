@@ -116,7 +116,7 @@
                 {
                     "name": "2D Vector",
                     "id": "b2ef9c21-16e0-4578-bf98-b48f34f60cd3",
-                    "path": "<Gamepad>/leftStick",
+                    "path": "<Gamepad>/leftStick/x",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
