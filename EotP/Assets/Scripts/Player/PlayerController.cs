@@ -13,6 +13,7 @@ public class PlayerController : MonoBehaviour
     public float tapJumpForce = 15f;
     public float heldJumpForce = 20f;
     public float holdThreshold = 0.3f;
+    public float coyoteTime = 0.1f;
 
     [Header("State")]
     public bool isGrounded;
@@ -32,6 +33,7 @@ public class PlayerController : MonoBehaviour
     private float pulseCooldownTimer;
     private float pulseCooldownDuration;
     private float jumpPressTime = -1f;
+    private float lastGroundedTime = -1f;
     private float actionStateTimer;
     private CharacterState currentState = CharacterState.Idle;
 
@@ -46,6 +48,8 @@ public class PlayerController : MonoBehaviour
     public bool IsInCombat => isInCombat;
     public CharacterState CurrentState => currentState;
 
+    private bool CanJump => Time.time - lastGroundedTime <= coyoteTime;
+
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -56,6 +60,7 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        HandleCoyoteTimer();
         HandlePulseCooldownTimer();
         HandleActionStateTimer();
 
@@ -117,7 +122,7 @@ public class PlayerController : MonoBehaviour
     {
         if (context.phase == InputActionPhase.Started)
         {
-            if (isGrounded)
+            if (CanJump)
             {
                 jumpPressTime = Time.time;
             }
@@ -126,17 +131,15 @@ public class PlayerController : MonoBehaviour
         {
             if (jumpPressTime < 0f) return;
 
-            if (isGrounded)
-            {
-                float heldDuration = Time.time - jumpPressTime;
-                float appliedForce = heldDuration >= holdThreshold ? heldJumpForce : tapJumpForce;
+            float heldDuration = Time.time - jumpPressTime;
+            float appliedForce = heldDuration >= holdThreshold ? heldJumpForce : tapJumpForce;
 
-                Vector2 velocity = rb.linearVelocity;
-                velocity.y = appliedForce;
-                rb.linearVelocity = velocity;
-            }
+            Vector2 velocity = rb.linearVelocity;
+            velocity.y = appliedForce;
+            rb.linearVelocity = velocity;
 
             jumpPressTime = -1f;
+            lastGroundedTime = -1f;
         }
     }
 
@@ -174,6 +177,14 @@ public class PlayerController : MonoBehaviour
         pulseCooldownTimer = pulseCooldownDuration;
 
         EnterActionState(CharacterState.Pulsing);
+    }
+
+    void HandleCoyoteTimer()
+    {
+        if (isGrounded && rb.linearVelocity.y <= 0.1f)
+        {
+            lastGroundedTime = Time.time;
+        }
     }
 
     void HandlePulseCooldownTimer()
@@ -243,10 +254,12 @@ public class PlayerController : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag("Ground"))
-        {
-            isGrounded = true;
-        }
+        CheckForGround(collision);
+    }
+
+    void OnCollisionStay2D(Collision2D collision)
+    {
+        CheckForGround(collision);
     }
 
     void OnCollisionExit2D(Collision2D collision)
@@ -254,6 +267,20 @@ public class PlayerController : MonoBehaviour
         if (collision.gameObject.CompareTag("Ground"))
         {
             isGrounded = false;
+        }
+    }
+
+    void CheckForGround(Collision2D collision)
+    {
+        if (!collision.gameObject.CompareTag("Ground")) return;
+
+        for (int i = 0; i < collision.contactCount; i++)
+        {
+            if (collision.GetContact(i).normal.y > 0.5f)
+            {
+                isGrounded = true;
+                return;
+            }
         }
     }
 
