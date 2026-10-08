@@ -120,20 +120,19 @@ public class PlayerController : MonoBehaviour
             if (isGrounded)
             {
                 jumpPressTime = Time.time;
-
-                Vector2 velocity = rb.linearVelocity;
-                velocity.y = tapJumpForce;
-                rb.linearVelocity = velocity;
             }
         }
         else if (context.phase == InputActionPhase.Canceled)
         {
             if (jumpPressTime < 0f) return;
 
-            if (Time.time - jumpPressTime >= holdThreshold)
+            if (isGrounded)
             {
+                float heldDuration = Time.time - jumpPressTime;
+                float appliedForce = heldDuration >= holdThreshold ? heldJumpForce : tapJumpForce;
+
                 Vector2 velocity = rb.linearVelocity;
-                velocity.y = heldJumpForce;
+                velocity.y = appliedForce;
                 rb.linearVelocity = velocity;
             }
 
