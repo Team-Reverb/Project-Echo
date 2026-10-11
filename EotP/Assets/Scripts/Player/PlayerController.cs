@@ -3,7 +3,9 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
+    // Inspector Variables
 
+    [Header("References")]
     [SerializeField] private EchoPulse echoPulsePrefab;
 
     [Header("Movement Variables")]
@@ -29,45 +31,36 @@ public class PlayerController : MonoBehaviour
     [Header("State Machine")]
     public float actionStateDuration = 0.3f;
 
+    // Private Variables
+
     private bool isInCombat;
-    private float pulseCooldownTimer;
-    private float pulseCooldownDuration;
+    private float moveInput;
     private float jumpPressTime = -1f;
     private float lastGroundedTime = -1f;
+    private float pulseCooldownTimer;
+    private float pulseCooldownDuration;
     private float actionStateTimer;
     private CharacterState currentState = CharacterState.Idle;
 
     private Rigidbody2D rb;
     private PlayerControls controls;
-    private float moveInput;
 
-    // Read-only values for other systems to use
+    // Read-only Values for Other Systems
+
     public float HealthNormalized => maxHealth > 0 ? currentHealth / maxHealth : 0f;
     public bool IsPulseReady => pulseCooldownTimer <= 0f;
     public float PulseCooldownNormalized => pulseCooldownDuration > 0f ? Mathf.Clamp01(pulseCooldownTimer / pulseCooldownDuration) : 0f;
     public bool IsInCombat => isInCombat;
     public CharacterState CurrentState => currentState;
-
     private bool CanJump => Time.time - lastGroundedTime <= coyoteTime;
+
+    // Unity Lifecycle
 
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         controls = new PlayerControls();
         currentHealth = maxHealth;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        HandleCoyoteTimer();
-        HandlePulseCooldownTimer();
-        HandleActionStateTimer();
-
-        if (actionStateTimer <= 0f)
-        {
-            UpdateMovementState();
-        }
     }
 
     void OnEnable()
@@ -94,24 +87,24 @@ public class PlayerController : MonoBehaviour
         controls.Player.Disable();
     }
 
+    void Update()
+    {
+        HandleCoyoteTimer();
+        HandlePulseCooldownTimer();
+        HandleActionStateTimer();
+
+        if (actionStateTimer <= 0f)
+        {
+            UpdateMovementState();
+        }
+    }
+
     void FixedUpdate()
     {
         HandleMovement();
     }
 
-    void HandleMovement()
-    {
-        Vector2 velocity = rb.linearVelocity;
-        velocity.x = moveInput * moveSpeed;
-        rb.linearVelocity = velocity;
-
-        if (moveInput != 0f)
-        {
-            Vector3 scale = transform.localScale;
-            scale.x = Mathf.Abs(scale.x) * Mathf.Sign(moveInput);
-            transform.localScale = scale;
-        }
-    }
+    // Input Callbacks
 
     void OnMove(InputAction.CallbackContext context)
     {
@@ -143,27 +136,14 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void OnAttack(InputAction.CallbackContext context)
-    {
-        FeaturePlaceholderLog("Attack");
-        EnterActionState(CharacterState.Attacking);
-    }
-
-    void OnInteract(InputAction.CallbackContext context)
-    {
-        FeaturePlaceholderLog("Interact");
-        EnterActionState(CharacterState.Interacting);
-    }
-
     void OnPulse(InputAction.CallbackContext context)
     {
-        if (!IsPulseReady)
+        if (echoPulsePrefab == null)
         {
-            Debug.Log("Pulse on cooldown. " + pulseCooldownTimer + " seconds left.");
+            Debug.LogWarning("PlayerController: Echo Pulse Prefab is not assigned.");
             return;
         }
 
-        FeaturePlaceholderLog("Pulse");
         Instantiate(echoPulsePrefab, transform.position, Quaternion.identity);
 
         if (isInCombat)
@@ -179,6 +159,34 @@ public class PlayerController : MonoBehaviour
         EnterActionState(CharacterState.Pulsing);
     }
 
+    void OnInteract(InputAction.CallbackContext context)
+    {
+        FeaturePlaceholderLog("Interact");
+        EnterActionState(CharacterState.Interacting);
+    }
+
+    void OnAttack(InputAction.CallbackContext context)
+    {
+        FeaturePlaceholderLog("Attack");
+        EnterActionState(CharacterState.Attacking);
+    }
+
+    // Movement Handling
+
+    void HandleMovement()
+    {
+        Vector2 velocity = rb.linearVelocity;
+        velocity.x = moveInput * moveSpeed;
+        rb.linearVelocity = velocity;
+
+        if (moveInput != 0f)
+        {
+            Vector3 scale = transform.localScale;
+            scale.x = Mathf.Abs(scale.x) * Mathf.Sign(moveInput);
+            transform.localScale = scale;
+        }
+    }
+
     void HandleCoyoteTimer()
     {
         if (isGrounded && rb.linearVelocity.y <= 0.1f)
@@ -187,6 +195,8 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    // Pulse Cooldown
+
     void HandlePulseCooldownTimer()
     {
         if (pulseCooldownTimer > 0f)
@@ -194,6 +204,8 @@ public class PlayerController : MonoBehaviour
             pulseCooldownTimer -= Time.deltaTime;
         }
     }
+
+    // Character State Handling
 
     void HandleActionStateTimer()
     {
@@ -232,12 +244,14 @@ public class PlayerController : MonoBehaviour
         actionStateTimer = actionStateDuration;
     }
 
-    public void TakeDamage(int amount)
+    // Health and Combat
+
+    public void TakeDamage(float amount)
     {
         currentHealth = Mathf.Max(currentHealth - amount, 0);
     }
 
-    public void Heal(int amount)
+    public void Heal(float amount)
     {
         currentHealth = Mathf.Min(currentHealth + amount, maxHealth);
     }
@@ -247,10 +261,7 @@ public class PlayerController : MonoBehaviour
         isInCombat = value;
     }
 
-    void FeaturePlaceholderLog(string feature)
-    {
-        Debug.Log(feature + " input detected");
-    }
+    // Ground Detection
 
     void OnCollisionEnter2D(Collision2D collision)
     {
@@ -284,7 +295,12 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    // Debug functions
+    // Debugging
+
+    void FeaturePlaceholderLog(string feature)
+    {
+        Debug.Log(feature + " input detected");
+    }
 
     [ContextMenu("Debug: Take 10 Damage")]
     void DebugTakeDamage() => TakeDamage(10);
