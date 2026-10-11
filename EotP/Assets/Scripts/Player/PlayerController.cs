@@ -9,27 +9,27 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private EchoPulse echoPulsePrefab;
 
     [Header("Movement Variables")]
-    public float moveSpeed = 6f;
+    [SerializeField] private float moveSpeed = 6f;
 
     [Header("Jump Variables")]
-    public float tapJumpForce = 15f;
-    public float heldJumpForce = 20f;
-    public float holdThreshold = 0.3f;
-    public float coyoteTime = 0.1f;
+    [SerializeField] private float tapJumpForce = 15f;
+    [SerializeField] private float heldJumpForce = 20f;
+    [SerializeField] private float holdThreshold = 0.3f;
+    [SerializeField] private float coyoteTime = 0.1f;
 
     [Header("State")]
-    public bool isGrounded;
+    [SerializeField] private bool isGrounded;
 
     [Header("Health")]
-    public float maxHealth = 100f;
-    public float currentHealth;
+    [SerializeField] private float maxHealth = 100f;
+    [SerializeField] private float currentHealth;
 
     [Header("Pulse Cooldown")]
-    public float pulseCooldownDefault = 1f;
-    public float pulseCooldownCombat = 5f;
+    [SerializeField] private float pulseCooldownDefault = 1f;
+    [SerializeField] private float pulseCooldownCombat = 5f;
 
     [Header("State Machine")]
-    public float actionStateDuration = 0.3f;
+    [SerializeField] private float actionStateDuration = 0.3f;
 
     // Private Variables
 
@@ -47,10 +47,13 @@ public class PlayerController : MonoBehaviour
 
     // Read-only Values for Other Systems
 
+    public bool IsGrounded => isGrounded;
+    public bool IsInCombat => isInCombat;
+    public float CurrentHealth => currentHealth;
+    public float MaxHealth => maxHealth;
     public float HealthNormalized => maxHealth > 0 ? currentHealth / maxHealth : 0f;
     public bool IsPulseReady => pulseCooldownTimer <= 0f;
     public float PulseCooldownNormalized => pulseCooldownDuration > 0f ? Mathf.Clamp01(pulseCooldownTimer / pulseCooldownDuration) : 0f;
-    public bool IsInCombat => isInCombat;
     public CharacterState CurrentState => currentState;
     private bool CanJump => Time.time - lastGroundedTime <= coyoteTime;
 
@@ -67,8 +70,8 @@ public class PlayerController : MonoBehaviour
     {
         controls.Player.Move.performed += OnMove;
         controls.Player.Move.canceled += OnMove;
-        controls.Player.Jump.started += OnJump;
-        controls.Player.Jump.canceled += OnJump;
+        controls.Player.Jump.started += OnJumpPressed;
+        controls.Player.Jump.canceled += OnJumpReleased;
         controls.Player.Pulse.performed += OnPulse;
         controls.Player.Interact.performed += OnInteract;
         controls.Player.Attack.performed += OnAttack;
@@ -79,8 +82,8 @@ public class PlayerController : MonoBehaviour
     {
         controls.Player.Move.performed -= OnMove;
         controls.Player.Move.canceled -= OnMove;
-        controls.Player.Jump.started -= OnJump;
-        controls.Player.Jump.canceled -= OnJump;
+        controls.Player.Jump.started -= OnJumpPressed;
+        controls.Player.Jump.canceled -= OnJumpReleased;
         controls.Player.Pulse.performed -= OnPulse;
         controls.Player.Interact.performed -= OnInteract;
         controls.Player.Attack.performed -= OnAttack;
@@ -111,33 +114,37 @@ public class PlayerController : MonoBehaviour
         moveInput = context.ReadValue<float>();
     }
 
-    void OnJump(InputAction.CallbackContext context)
+    void OnJumpPressed(InputAction.CallbackContext context)
     {
-        if (context.phase == InputActionPhase.Started)
+        if (CanJump)
         {
-            if (CanJump)
-            {
-                jumpPressTime = Time.time;
-            }
+            jumpPressTime = Time.time;
         }
-        else if (context.phase == InputActionPhase.Canceled)
-        {
-            if (jumpPressTime < 0f) return;
+    }
 
-            float heldDuration = Time.time - jumpPressTime;
-            float appliedForce = heldDuration >= holdThreshold ? heldJumpForce : tapJumpForce;
+    void OnJumpReleased(InputAction.CallbackContext context)
+    {
+        if (jumpPressTime < 0f) return;
 
-            Vector2 velocity = rb.linearVelocity;
-            velocity.y = appliedForce;
-            rb.linearVelocity = velocity;
+        float heldDuration = Time.time - jumpPressTime;
+        float appliedForce = heldDuration >= holdThreshold ? heldJumpForce : tapJumpForce;
 
-            jumpPressTime = -1f;
-            lastGroundedTime = -1f;
-        }
+        Vector2 velocity = rb.linearVelocity;
+        velocity.y = appliedForce;
+        rb.linearVelocity = velocity;
+
+        jumpPressTime = -1f;
+        lastGroundedTime = -1f;
     }
 
     void OnPulse(InputAction.CallbackContext context)
     {
+        if (!IsPulseReady)
+        {
+            Debug.Log("Pulse on cooldown. " + pulseCooldownTimer + " seconds left.");
+            return;
+        }
+
         if (echoPulsePrefab == null)
         {
             Debug.LogWarning("PlayerController: Echo Pulse Prefab is not assigned.");
@@ -145,17 +152,7 @@ public class PlayerController : MonoBehaviour
         }
 
         Instantiate(echoPulsePrefab, transform.position, Quaternion.identity);
-
-        if (isInCombat)
-        {
-            pulseCooldownDuration = pulseCooldownCombat;
-        }
-        else
-        {
-            pulseCooldownDuration = pulseCooldownDefault;
-        }
-        pulseCooldownTimer = pulseCooldownDuration;
-
+        StartPulseCooldown();
         EnterActionState(CharacterState.Pulsing);
     }
 
@@ -181,10 +178,15 @@ public class PlayerController : MonoBehaviour
 
         if (moveInput != 0f)
         {
-            Vector3 scale = transform.localScale;
-            scale.x = Mathf.Abs(scale.x) * Mathf.Sign(moveInput);
-            transform.localScale = scale;
+            FaceDirection(moveInput);
         }
+    }
+
+    void FaceDirection(float direction)
+    {
+        Vector3 scale = transform.localScale;
+        scale.x = Mathf.Abs(scale.x) * Mathf.Sign(direction);
+        transform.localScale = scale;
     }
 
     void HandleCoyoteTimer()
@@ -203,6 +205,19 @@ public class PlayerController : MonoBehaviour
         {
             pulseCooldownTimer -= Time.deltaTime;
         }
+    }
+
+    void StartPulseCooldown()
+    {
+        if (isInCombat)
+        {
+            pulseCooldownDuration = pulseCooldownCombat;
+        }
+        else
+        {
+            pulseCooldownDuration = pulseCooldownDefault;
+        }
+        pulseCooldownTimer = pulseCooldownDuration;
     }
 
     // Character State Handling
