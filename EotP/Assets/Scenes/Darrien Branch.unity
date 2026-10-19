@@ -385,6 +385,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &1502482218 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5790423870322909275, guid: 9ff2e981150aa9041a0dd0058eae28ba, type: 3}
+  m_PrefabInstance: {fileID: 2111255864}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &2111255864
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -484,7 +489,7 @@ PrefabInstance:
     - target: {fileID: 3219501724924826015, guid: 6fc0d9dd385ba7042bfb4d9d3319b8ed, type: 3}
       propertyPath: target
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1502482218}
     - target: {fileID: 3653139071932776204, guid: 6fc0d9dd385ba7042bfb4d9d3319b8ed, type: 3}
       propertyPath: m_Name
       value: Player Follow Camera

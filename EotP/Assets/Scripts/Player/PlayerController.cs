@@ -3,48 +3,61 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
+    // Inspector Variables
 
+    [Header("References")]
     [SerializeField] private EchoPulse echoPulsePrefab;
 
     [Header("Movement Variables")]
-    public float moveSpeed = 6f;
+    [SerializeField] private float moveSpeed = 6f;
 
     [Header("Jump Variables")]
-    public float tapJumpForce = 6f;
-    public float heldJumpForce = 6f;
-    public float holdThreshold = 0.2f;
+    [SerializeField] private float tapJumpForce = 15f;
+    [SerializeField] private float heldJumpForce = 20f;
+    [SerializeField] private float holdThreshold = 0.3f;
+    [SerializeField] private float coyoteTime = 0.1f;
 
     [Header("State")]
-    public bool isGrounded;
+    [SerializeField] private bool isGrounded;
 
     [Header("Health")]
-    public float maxHealth = 100f;
-    public float currentHealth;
+    [SerializeField] private float maxHealth = 100f;
+    [SerializeField] private float currentHealth;
 
     [Header("Pulse Cooldown")]
-    public float pulseCooldownDefault = 1f;
-    public float pulseCooldownCombat = 5f;
+    [SerializeField] private float pulseCooldownDefault = 1f;
+    [SerializeField] private float pulseCooldownCombat = 5f;
 
     [Header("State Machine")]
-    public float actionStateDuration = 0.3f;
+    [SerializeField] private float actionStateDuration = 0.3f;
+
+    // Private Variables
 
     private bool isInCombat;
+    private float moveInput;
+    private float jumpPressTime = -1f;
+    private float lastGroundedTime = -1f;
     private float pulseCooldownTimer;
     private float pulseCooldownDuration;
-    private float jumpPressTime = -1f;
     private float actionStateTimer;
     private CharacterState currentState = CharacterState.Idle;
 
     private Rigidbody2D rb;
     private PlayerControls controls;
-    private float moveInput;
 
-    // Read-only values for other systems to use
+    // Read-only Values for Other Systems
+
+    public bool IsGrounded => isGrounded;
+    public bool IsInCombat => isInCombat;
+    public float CurrentHealth => currentHealth;
+    public float MaxHealth => maxHealth;
     public float HealthNormalized => maxHealth > 0 ? currentHealth / maxHealth : 0f;
     public bool IsPulseReady => pulseCooldownTimer <= 0f;
     public float PulseCooldownNormalized => pulseCooldownDuration > 0f ? Mathf.Clamp01(pulseCooldownTimer / pulseCooldownDuration) : 0f;
-    public bool IsInCombat => isInCombat;
     public CharacterState CurrentState => currentState;
+    private bool CanJump => Time.time - lastGroundedTime <= coyoteTime;
+
+    // Unity Lifecycle
 
     void Awake()
     {
@@ -53,24 +66,12 @@ public class PlayerController : MonoBehaviour
         currentHealth = maxHealth;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        HandlePulseCooldownTimer();
-        HandleActionStateTimer();
-
-        if (actionStateTimer <= 0f)
-        {
-            UpdateMovementState();
-        }
-    }
-
     void OnEnable()
     {
         controls.Player.Move.performed += OnMove;
         controls.Player.Move.canceled += OnMove;
-        controls.Player.Jump.started += OnJump;
-        controls.Player.Jump.canceled += OnJump;
+        controls.Player.Jump.started += OnJumpPressed;
+        controls.Player.Jump.canceled += OnJumpReleased;
         controls.Player.Pulse.performed += OnPulse;
         controls.Player.Interact.performed += OnInteract;
         controls.Player.Attack.performed += OnAttack;
@@ -81,12 +82,24 @@ public class PlayerController : MonoBehaviour
     {
         controls.Player.Move.performed -= OnMove;
         controls.Player.Move.canceled -= OnMove;
-        controls.Player.Jump.started -= OnJump;
-        controls.Player.Jump.canceled -= OnJump;
+        controls.Player.Jump.started -= OnJumpPressed;
+        controls.Player.Jump.canceled -= OnJumpReleased;
         controls.Player.Pulse.performed -= OnPulse;
         controls.Player.Interact.performed -= OnInteract;
         controls.Player.Attack.performed -= OnAttack;
         controls.Player.Disable();
+    }
+
+    void Update()
+    {
+        HandleCoyoteTimer();
+        HandlePulseCooldownTimer();
+        HandleActionStateTimer();
+
+        if (actionStateTimer <= 0f)
+        {
+            UpdateMovementState();
+        }
     }
 
     void FixedUpdate()
@@ -94,63 +107,34 @@ public class PlayerController : MonoBehaviour
         HandleMovement();
     }
 
-    void HandleMovement()
-    {
-        Vector2 velocity = rb.linearVelocity;
-        velocity.x = moveInput * moveSpeed;
-        rb.linearVelocity = velocity;
-
-        if (moveInput != 0f)
-        {
-            Vector3 scale = transform.localScale;
-            scale.x = Mathf.Abs(scale.x) * Mathf.Sign(moveInput);
-            transform.localScale = scale;
-        }
-    }
+    // Input Callbacks
 
     void OnMove(InputAction.CallbackContext context)
     {
         moveInput = context.ReadValue<float>();
     }
 
-    void OnJump(InputAction.CallbackContext context)
+    void OnJumpPressed(InputAction.CallbackContext context)
     {
-        if (context.phase == InputActionPhase.Started)
+        if (CanJump)
         {
-            if (isGrounded)
-            {
-                jumpPressTime = Time.time;
-
-                Vector2 velocity = rb.linearVelocity;
-                velocity.y = tapJumpForce;
-                rb.linearVelocity = velocity;
-            }
-        }
-        else if (context.phase == InputActionPhase.Canceled)
-        {
-            if (jumpPressTime < 0f) return;
-
-            if (Time.time - jumpPressTime >= holdThreshold)
-            {
-                Vector2 velocity = rb.linearVelocity;
-                velocity.y = heldJumpForce;
-                rb.linearVelocity = velocity;
-            }
-
-            jumpPressTime = -1f;
+            jumpPressTime = Time.time;
         }
     }
 
-    void OnAttack(InputAction.CallbackContext context)
+    void OnJumpReleased(InputAction.CallbackContext context)
     {
-        FeaturePlaceholderLog("Attack");
-        EnterActionState(CharacterState.Attacking);
-    }
+        if (jumpPressTime < 0f) return;
 
-    void OnInteract(InputAction.CallbackContext context)
-    {
-        FeaturePlaceholderLog("Interact");
-        EnterActionState(CharacterState.Interacting);
+        float heldDuration = Time.time - jumpPressTime;
+        float appliedForce = heldDuration >= holdThreshold ? heldJumpForce : tapJumpForce;
+
+        Vector2 velocity = rb.linearVelocity;
+        velocity.y = appliedForce;
+        rb.linearVelocity = velocity;
+
+        jumpPressTime = -1f;
+        lastGroundedTime = -1f;
     }
 
     void OnPulse(InputAction.CallbackContext context)
@@ -161,9 +145,70 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
-        FeaturePlaceholderLog("Pulse");
-        Instantiate(echoPulsePrefab, transform.position, Quaternion.identity);
+        if (echoPulsePrefab == null)
+        {
+            Debug.LogWarning("PlayerController: Echo Pulse Prefab is not assigned.");
+            return;
+        }
 
+        Instantiate(echoPulsePrefab, transform.position, Quaternion.identity);
+        StartPulseCooldown();
+        EnterActionState(CharacterState.Pulsing);
+    }
+
+    void OnInteract(InputAction.CallbackContext context)
+    {
+        FeaturePlaceholderLog("Interact");
+        EnterActionState(CharacterState.Interacting);
+    }
+
+    void OnAttack(InputAction.CallbackContext context)
+    {
+        FeaturePlaceholderLog("Attack");
+        EnterActionState(CharacterState.Attacking);
+    }
+
+    // Movement Handling
+
+    void HandleMovement()
+    {
+        Vector2 velocity = rb.linearVelocity;
+        velocity.x = moveInput * moveSpeed;
+        rb.linearVelocity = velocity;
+
+        if (moveInput != 0f)
+        {
+            FaceDirection(moveInput);
+        }
+    }
+
+    void FaceDirection(float direction)
+    {
+        Vector3 scale = transform.localScale;
+        scale.x = Mathf.Abs(scale.x) * Mathf.Sign(direction);
+        transform.localScale = scale;
+    }
+
+    void HandleCoyoteTimer()
+    {
+        if (isGrounded && rb.linearVelocity.y <= 0.1f)
+        {
+            lastGroundedTime = Time.time;
+        }
+    }
+
+    // Pulse Cooldown
+
+    void HandlePulseCooldownTimer()
+    {
+        if (pulseCooldownTimer > 0f)
+        {
+            pulseCooldownTimer -= Time.deltaTime;
+        }
+    }
+
+    void StartPulseCooldown()
+    {
         if (isInCombat)
         {
             pulseCooldownDuration = pulseCooldownCombat;
@@ -173,17 +218,9 @@ public class PlayerController : MonoBehaviour
             pulseCooldownDuration = pulseCooldownDefault;
         }
         pulseCooldownTimer = pulseCooldownDuration;
-
-        EnterActionState(CharacterState.Pulsing);
     }
 
-    void HandlePulseCooldownTimer()
-    {
-        if (pulseCooldownTimer > 0f)
-        {
-            pulseCooldownTimer -= Time.deltaTime;
-        }
-    }
+    // Character State Handling
 
     void HandleActionStateTimer()
     {
@@ -222,12 +259,14 @@ public class PlayerController : MonoBehaviour
         actionStateTimer = actionStateDuration;
     }
 
-    public void TakeDamage(int amount)
+    // Health and Combat
+
+    public void TakeDamage(float amount)
     {
         currentHealth = Mathf.Max(currentHealth - amount, 0);
     }
 
-    public void Heal(int amount)
+    public void Heal(float amount)
     {
         currentHealth = Mathf.Min(currentHealth + amount, maxHealth);
     }
@@ -237,17 +276,16 @@ public class PlayerController : MonoBehaviour
         isInCombat = value;
     }
 
-    void FeaturePlaceholderLog(string feature)
-    {
-        Debug.Log(feature + " input detected");
-    }
+    // Ground Detection
 
     void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag("Ground"))
-        {
-            isGrounded = true;
-        }
+        CheckForGround(collision);
+    }
+
+    void OnCollisionStay2D(Collision2D collision)
+    {
+        CheckForGround(collision);
     }
 
     void OnCollisionExit2D(Collision2D collision)
@@ -258,7 +296,26 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    // Debug functions
+    void CheckForGround(Collision2D collision)
+    {
+        if (!collision.gameObject.CompareTag("Ground")) return;
+
+        for (int i = 0; i < collision.contactCount; i++)
+        {
+            if (collision.GetContact(i).normal.y > 0.5f)
+            {
+                isGrounded = true;
+                return;
+            }
+        }
+    }
+
+    // Debugging
+
+    void FeaturePlaceholderLog(string feature)
+    {
+        Debug.Log(feature + " input detected");
+    }
 
     [ContextMenu("Debug: Take 10 Damage")]
     void DebugTakeDamage() => TakeDamage(10);
