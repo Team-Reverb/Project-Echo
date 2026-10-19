@@ -1,0 +1,38 @@
+{
+    "BiterAgent": {
+        "checkpoints": [
+            {
+                "steps": 499960,
+                "file_path": "results\\biterparallel6\\BiterAgent\\BiterAgent-499960.onnx",
+                "reward": null,
+                "creation_time": 1792447601.0130484,
+                "auxillary_file_paths": [
+                    "results\\biterparallel6\\BiterAgent\\BiterAgent-499960.pt"
+                ]
+            },
+            {
+                "steps": 500472,
+                "file_path": "results\\biterparallel6\\BiterAgent\\BiterAgent-500472.onnx",
+                "reward": null,
+                "creation_time": 1792447601.0658069,
+                "auxillary_file_paths": [
+                    "results\\biterparallel6\\BiterAgent\\BiterAgent-500472.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 500472,
+            "file_path": "results\\biterparallel6\\BiterAgent.onnx",
+            "reward": null,
+            "creation_time": 1792447601.0658069,
+            "auxillary_file_paths": [
+                "results\\biterparallel6\\BiterAgent\\BiterAgent-500472.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "1.1.0",
+        "torch_version": "2.2.2+cu121"
+    }
+}

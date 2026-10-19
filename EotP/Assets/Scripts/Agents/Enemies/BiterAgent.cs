@@ -106,9 +106,8 @@ public class BiterAgent : Agent
         _renderer = GetComponent<SpriteRenderer>();
         CurrentEpisode = 0;
         CumulativeReward = 0f;
-        Acceleration = Vector2.zero;
         _initialMouthRotation = transform.rotation;
-        MaxAcceleration = 5f;
+      
 
         _states = new List<State>();
         _states.Add(new WanderingState());
@@ -127,9 +126,11 @@ public class BiterAgent : Agent
     void FixedUpdate()
     {
         
-        if (Acceleration.magnitude > MaxAcceleration) Acceleration = Acceleration.normalized * MaxAcceleration;
-        _rigidBody.AddForce(Acceleration, ForceMode2D.Force);
-       // _rigidBody.AddForce(-Acceleration.normalized/10, ForceMode2D.Force);
+      //  if (Acceleration.magnitude > MaxAcceleration) Acceleration = Acceleration.normalized * MaxAcceleration;
+        
+
+
+        
 
     }
     
@@ -235,27 +236,27 @@ public class BiterAgent : Agent
     {
         var actions = act[0];
 
-        float newAccel = _moveSpeed * Time.deltaTime;
+        float dt = Time.deltaTime;
 
         switch (actions)
         {
             case 1:
+                _rigidBody.AddForce(new Vector2(0,1) * dt, ForceMode2D.Force);
                 
-                Acceleration += new Vector2(0, 1) * newAccel;
                 break;
             case 2:
 
-                
-                Acceleration += new Vector2(-1, 0) * newAccel;
+                _rigidBody.AddForce(new Vector2(-1,0) * dt, ForceMode2D.Force);
+
                 break;
             case 3:
 
-                
-                Acceleration += new Vector2(1, 0) * newAccel;
+                _rigidBody.AddForce(new Vector2(1, 0) * dt, ForceMode2D.Force);
+
                 break;
             case 4:
+                _rigidBody.AddForce(new Vector2(0, -1) * dt, ForceMode2D.Force);
 
-                Acceleration += new Vector2(0, -1) * newAccel;
                 break;
 
         }

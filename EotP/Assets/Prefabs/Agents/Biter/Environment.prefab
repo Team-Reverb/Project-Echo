@@ -153,7 +153,7 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 0.5
-  m_LinearDamping: 0
+  m_LinearDamping: 3
   m_AngularDamping: 0.05
   m_GravityScale: 0
   m_Material: {fileID: 6200000, guid: 608874090bd3bf14c8a4cdd8971170fa, type: 2}
@@ -191,7 +191,7 @@ MonoBehaviour:
     hasUpgradedBrainParametersWithActionSpec: 1
   m_Model: {fileID: 5022602860645237092, guid: f5ab8f5c9a548a84195c40a054e9a0ae, type: 3}
   m_InferenceDevice: 0
-  m_BehaviorType: 2
+  m_BehaviorType: 1
   m_BehaviorName: BiterAgent
   TeamId: 0
   m_UseChildSensors: 1
@@ -215,14 +215,14 @@ MonoBehaviour:
   hasUpgradedFromAgentParameters: 1
   MaxStep: 5000
   _goal: {fileID: 3442195482922877660}
-  _moveSpeed: 10
+  _moveSpeed: 30
   _rotationSpeed: 180
   Environment: {fileID: 535446786196731030}
   CurrentEpisode: 0
   CumulativeReward: 0
   PatrolPoints: []
   Acceleration: {x: 0, y: 0}
-  MaxAcceleration: 4
+  MaxAcceleration: 600
   NeuralNetwork: {fileID: 0}
 --- !u!114 &3924512137311334858
 MonoBehaviour:
