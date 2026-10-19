@@ -6,6 +6,8 @@ public class BiterGoalRunnerBehaviour : MonoBehaviour
 
     public float Speed;
 
+    public GameObject Environment;
+
     private Vector2 _acceleration;
     private Vector2 _goal;
     private Rigidbody2D _rigidBody;
@@ -40,6 +42,6 @@ public class BiterGoalRunnerBehaviour : MonoBehaviour
         float x = xvals[Random.Range(0, 2)];
         int y = yvals[Random.Range(0, 2)];
 
-        return new Vector2(x, y);
+        return new Vector2(x, y) + new Vector2( Environment.transform.position.x, Environment.transform.position.y);
     }
 }

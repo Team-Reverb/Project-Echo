@@ -82,6 +82,8 @@ public class BiterAgent : Agent
     private Rigidbody2D _rigidBody;
     private Quaternion _initialMouthRotation;
 
+    public GameObject Environment;
+
     public int CurrentEpisode = 0;
     public float CumulativeReward = 0f;
     public List<Vector2> PatrolPoints;
@@ -106,6 +108,7 @@ public class BiterAgent : Agent
         CumulativeReward = 0f;
         Acceleration = Vector2.zero;
         _initialMouthRotation = transform.rotation;
+        MaxAcceleration = 5f;
 
         _states = new List<State>();
         _states.Add(new WanderingState());
@@ -123,10 +126,11 @@ public class BiterAgent : Agent
 
     void FixedUpdate()
     {
-        // acceleration being 0 means wander state is active
+        
         if (Acceleration.magnitude > MaxAcceleration) Acceleration = Acceleration.normalized * MaxAcceleration;
         _rigidBody.AddForce(Acceleration, ForceMode2D.Force);
-        _rigidBody.AddForce(-Acceleration.normalized/2, ForceMode2D.Force);
+       // _rigidBody.AddForce(-Acceleration.normalized/10, ForceMode2D.Force);
+        Debug.Log(Acceleration + " | " + -Acceleration.normalized / 10);
     }
     
 
@@ -166,7 +170,7 @@ public class BiterAgent : Agent
         int x = vals[Random.Range(0, 2)];
         int y = vals[Random.Range(0, 2)];
 
-        Vector2 goalPosition = new Vector2(x, y);
+        Vector2 goalPosition = new Vector2(Environment.transform.position.x, Environment.transform.position.y) + new Vector2(x, y);
 
         _goal.transform.position = goalPosition;
     }
@@ -237,21 +241,21 @@ public class BiterAgent : Agent
         {
             case 1:
                 
-                Acceleration = new Vector2(0, 1) * newAccel;
+                Acceleration += new Vector2(0, 1) * newAccel;
                 break;
             case 2:
 
                 
-                Acceleration = new Vector2(-1, 0) * newAccel;
+                Acceleration += new Vector2(-1, 0) * newAccel;
                 break;
             case 3:
 
                 
-                Acceleration = new Vector2(1, 0) * newAccel;
+                Acceleration += new Vector2(1, 0) * newAccel;
                 break;
             case 4:
 
-                Acceleration = new Vector2(0, -1) * newAccel;
+                Acceleration += new Vector2(0, -1) * newAccel;
                 break;
 
         }
