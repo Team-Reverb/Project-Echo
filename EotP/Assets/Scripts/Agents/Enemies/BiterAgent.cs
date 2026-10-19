@@ -130,7 +130,7 @@ public class BiterAgent : Agent
         if (Acceleration.magnitude > MaxAcceleration) Acceleration = Acceleration.normalized * MaxAcceleration;
         _rigidBody.AddForce(Acceleration, ForceMode2D.Force);
        // _rigidBody.AddForce(-Acceleration.normalized/10, ForceMode2D.Force);
-        Debug.Log(Acceleration + " | " + -Acceleration.normalized / 10);
+
     }
     
 
@@ -285,7 +285,7 @@ public class BiterAgent : Agent
     {
         if (collision.gameObject.CompareTag("Wall"))
         {
-            Debug.Log("Collision");
+           // Debug.Log("Collision");
             AddReward(-0.05f);
 
             if (_renderer != null)
