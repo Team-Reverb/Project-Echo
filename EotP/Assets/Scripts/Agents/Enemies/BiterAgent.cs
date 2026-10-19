@@ -26,7 +26,7 @@ public class WanderingState : State
     private Vector2 _goal;
     public override void OnEnter() 
     {
-        _agent._acceleration = 0;
+        _agent.Acceleration = Vector2.zero;
         RandomGoal();
     }
 
@@ -39,7 +39,7 @@ public class WanderingState : State
     {
         GameObject gameObject = _agent.gameObject;
         Vector2 sub = _goal - new Vector2(gameObject.transform.position.x, gameObject.transform.position.y);
-        _agent.FinalAcceleration = Vector2.Normalize(sub) * _agent._moveSpeed;
+        _agent.Acceleration = Vector2.Normalize(sub) * _agent._moveSpeed;
 
         if (sub.magnitude < 0.25f) { RandomGoal(); }
     }
@@ -85,8 +85,9 @@ public class BiterAgent : Agent
     public int CurrentEpisode = 0;
     public float CumulativeReward = 0f;
     public List<Vector2> PatrolPoints;
-    public float _acceleration;
-    [HideInInspector] public Vector2 FinalAcceleration;
+    [HideInInspector] public Vector2 Acceleration;
+
+    
     public float MaxAcceleration;
     public ModelAsset NeuralNetwork;
 
@@ -103,7 +104,7 @@ public class BiterAgent : Agent
         _renderer = GetComponent<SpriteRenderer>();
         CurrentEpisode = 0;
         CumulativeReward = 0f;
-        _acceleration = 0;
+        Acceleration = Vector2.zero;
         _initialMouthRotation = transform.rotation;
 
         _states = new List<State>();
@@ -123,8 +124,9 @@ public class BiterAgent : Agent
     void FixedUpdate()
     {
         // acceleration being 0 means wander state is active
-        if (_acceleration > 0 ) FinalAcceleration = transform.up * _acceleration;
-        _rigidBody.AddForce(FinalAcceleration, ForceMode2D.Force);
+        if (Acceleration.magnitude > MaxAcceleration) Acceleration = Acceleration.normalized * MaxAcceleration;
+        _rigidBody.AddForce(Acceleration, ForceMode2D.Force);
+        _rigidBody.AddForce(-Acceleration.normalized/2, ForceMode2D.Force);
     }
     
 
@@ -179,13 +181,15 @@ public class BiterAgent : Agent
 
         float biterRotation_normalized = (transform.localRotation.eulerAngles.z / 360f) * 2f - 1f;
 
-        float acceleration_normalized = _acceleration / MaxAcceleration;
+        float accelerationx_normalized = Acceleration.x / MaxAcceleration;
+        float accelerationy_normalized = Acceleration.y / MaxAcceleration;
 
         sensor.AddObservation(goalPosX_normalized);
         sensor.AddObservation(goalPosY_normalized);
         sensor.AddObservation(biterPosX_normalized);
         sensor.AddObservation(biterPosY_normalized);
-        sensor.AddObservation(acceleration_normalized);
+        sensor.AddObservation(accelerationx_normalized);
+        sensor.AddObservation(accelerationy_normalized);
         sensor.AddObservation(biterRotation_normalized);
 
     }
@@ -227,27 +231,27 @@ public class BiterAgent : Agent
     {
         var actions = act[0];
 
+        float newAccel = _moveSpeed * Time.deltaTime;
+
         switch (actions)
         {
             case 1:
-                float newAccel = _moveSpeed * Time.deltaTime;
-                if (_acceleration + newAccel < MaxAcceleration) _acceleration += newAccel;
+                
+                Acceleration = new Vector2(0, 1) * newAccel;
                 break;
             case 2:
 
-                transform.Rotate(0f, 0f, -_rotationSpeed * Time.deltaTime);
+                
+                Acceleration = new Vector2(-1, 0) * newAccel;
                 break;
             case 3:
 
-                transform.Rotate(0f, 0f, _rotationSpeed * Time.deltaTime);
+                
+                Acceleration = new Vector2(1, 0) * newAccel;
                 break;
             case 4:
-                
-                float newBackAccel = -_acceleration * _moveSpeed * Time.deltaTime;
-                
-                    _acceleration += newBackAccel; Debug.Log("Case4");
-                
-              
+
+                Acceleration = new Vector2(0, -1) * newAccel;
                 break;
 
         }
