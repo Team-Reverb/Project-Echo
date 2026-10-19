@@ -26,7 +26,6 @@ public class WanderingState : State
     private Vector2 _goal;
     public override void OnEnter() 
     {
-        _agent.Acceleration = Vector2.zero;
         RandomGoal();
     }
 
@@ -39,7 +38,8 @@ public class WanderingState : State
     {
         GameObject gameObject = _agent.gameObject;
         Vector2 sub = _goal - new Vector2(gameObject.transform.position.x, gameObject.transform.position.y);
-        _agent.Acceleration = Vector2.Normalize(sub) * _agent._moveSpeed;
+
+        _agent.gameObject.GetComponent<Rigidbody2D>().AddForce(Vector2.Normalize(sub) * _agent._moveSpeed * Time.deltaTime, ForceMode2D.Force);
 
         if (sub.magnitude < 0.25f) { RandomGoal(); }
     }
@@ -87,10 +87,6 @@ public class BiterAgent : Agent
     public int CurrentEpisode = 0;
     public float CumulativeReward = 0f;
     public List<Vector2> PatrolPoints;
-    [HideInInspector] public Vector2 Acceleration;
-
-    
-    public float MaxAcceleration;
     public ModelAsset NeuralNetwork;
 
     private List<State> _states;
@@ -184,18 +180,11 @@ public class BiterAgent : Agent
         float biterPosX_normalized = transform.localPosition.x / 5f;
         float biterPosY_normalized = transform.localPosition.y / 5f;
 
-        float biterRotation_normalized = (transform.localRotation.eulerAngles.z / 360f) * 2f - 1f;
-
-        float accelerationx_normalized = Acceleration.x / MaxAcceleration;
-        float accelerationy_normalized = Acceleration.y / MaxAcceleration;
-
         sensor.AddObservation(goalPosX_normalized);
         sensor.AddObservation(goalPosY_normalized);
         sensor.AddObservation(biterPosX_normalized);
         sensor.AddObservation(biterPosY_normalized);
-        sensor.AddObservation(accelerationx_normalized);
-        sensor.AddObservation(accelerationy_normalized);
-        sensor.AddObservation(biterRotation_normalized);
+  
 
     }
 
@@ -236,7 +225,7 @@ public class BiterAgent : Agent
     {
         var actions = act[0];
 
-        float dt = Time.deltaTime;
+        float dt = _moveSpeed * Time.deltaTime;
 
         switch (actions)
         {
