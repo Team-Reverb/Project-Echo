@@ -217,6 +217,7 @@ MonoBehaviour:
   _goal: {fileID: 3442195482922877660}
   _moveSpeed: 10
   _rotationSpeed: 180
+  Environment: {fileID: 535446786196731030}
   CurrentEpisode: 0
   CumulativeReward: 0
   PatrolPoints: []
@@ -1038,6 +1039,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BiterGoalRunnerBehaviour
   Speed: 8
+  Environment: {fileID: 535446786196731030}
 --- !u!1 &3893199522869444054
 GameObject:
   m_ObjectHideFlags: 0

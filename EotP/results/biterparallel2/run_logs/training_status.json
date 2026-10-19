@@ -1,4 +1,26 @@
 {
+    "BiterAgent": {
+        "checkpoints": [
+            {
+                "steps": 39648,
+                "file_path": "results\\biterparallel2\\BiterAgent\\BiterAgent-39648.onnx",
+                "reward": null,
+                "creation_time": 1792391259.1833847,
+                "auxillary_file_paths": [
+                    "results\\biterparallel2\\BiterAgent\\BiterAgent-39648.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 39648,
+            "file_path": "results\\biterparallel2\\BiterAgent.onnx",
+            "reward": null,
+            "creation_time": 1792391259.1833847,
+            "auxillary_file_paths": [
+                "results\\biterparallel2\\BiterAgent\\BiterAgent-39648.pt"
+            ]
+        }
+    },
     "metadata": {
         "stats_format_version": "0.3.0",
         "mlagents_version": "1.1.0",
