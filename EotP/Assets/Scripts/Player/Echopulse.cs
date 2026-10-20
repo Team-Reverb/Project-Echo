@@ -102,7 +102,12 @@ public class EchoPulse : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        Debug.Log(collision.gameObject.name);
+        //Debug.Log(collision.gameObject.name);
+
+        if (collision.gameObject.tag == "Agent")
+        {
+            collision.gameObject.GetComponent<BiterAgent>().Alert(Origin);
+        }
     }
 
     public void UpdateColliderShape()
@@ -111,6 +116,7 @@ public class EchoPulse : MonoBehaviour
         CircleCollider2D circle = GetComponent<CircleCollider2D>();
 
         circle.radius = Radius;
+        if (Radius > 1 && IsExpanding == false) { circle.radius = 0; } // disable if climax reached
 
     }
 }

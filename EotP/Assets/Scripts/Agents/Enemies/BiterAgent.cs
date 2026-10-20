@@ -10,6 +10,7 @@ using Unity.InferenceEngine;
 using Random = UnityEngine.Random;
 using Unity.Mathematics;
 using Unity.MLAgents.Policies;
+using System.Runtime.CompilerServices;
 
 public  class State
 {
@@ -180,7 +181,8 @@ public class BiterAgent : Agent
             return;
         }
 
-        GameObject alertGoal = Instantiate(_dummyGoal,alertLocation, new Quaternion(0,0,0,0));
+        if (_goal != null) { Destroy(_goal); _goal = null; }
+        GameObject alertGoal = Instantiate(_dummyGoal,alertLocation, new Quaternion(0,0,0,0), gameObject.transform.parent.transform);
         _goal = alertGoal;
     }
     
@@ -208,7 +210,7 @@ public class BiterAgent : Agent
 
     private void SpawnObjects()
     {
-        transform.localPosition = OriginalPosition;
+      //  transform.localPosition = OriginalPosition;
 
         if (DebugMode == true) RandomizeGoal();
 
@@ -320,9 +322,13 @@ public class BiterAgent : Agent
     }
 
     
-    public void OnTriggerEnter2D(Collider2D other)
+    public void OnTriggerEnter2D(Collider2D collision)
     {
-      //  Debug.Log("Trigger");
+
+        if (collision.gameObject.CompareTag("Goal"))
+        {
+            GoalReached();
+        }
     }
     
     private void GoalReached()
@@ -330,12 +336,16 @@ public class BiterAgent : Agent
         AddReward(1.0f);
         CumulativeReward = GetCumulativeReward();
 
-        RandomizeGoal();
+        
 
         if (!DebugMode) { 
             Destroy(_goal);
             _goal = null;
             ChangeState(0);
+        }
+        else
+        {
+            RandomizeGoal();
         }
 
         //EndEpisode();
@@ -343,11 +353,13 @@ public class BiterAgent : Agent
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (!DebugMode) return;
+        
 
         if (collision.gameObject.CompareTag("Wall"))
         {
-           // Debug.Log("Collision");
+            if (!DebugMode) return;
+
+            // Debug.Log("Collision");
             AddReward(-0.05f);
 
             if (_renderer != null)
@@ -361,6 +373,8 @@ public class BiterAgent : Agent
             GoalReached();
         }
     }
+
+   
 
     private void OnCollisionStay2D(Collision2D collision)
     {
