@@ -50,11 +50,10 @@ public class WanderingState : State
 
     public override void OnUpdate() 
     {
-        Debug.Log("R");
         GameObject gameObject = _agent.gameObject;
         Vector2 sub = _goal - new Vector2(gameObject.transform.position.x, gameObject.transform.position.y);
 
-        _agent.gameObject.GetComponent<Rigidbody2D>().AddForce(Vector2.Normalize(sub) * (_agent._moveSpeed / 1.5f )* Time.deltaTime, ForceMode2D.Force);
+        _agent.gameObject.GetComponent<Rigidbody2D>().AddForce(Vector2.Normalize(sub) * (_agent._moveSpeed / 2.5f )* Time.deltaTime, ForceMode2D.Force);
 
         if (sub.magnitude < 0.25f) { RandomGoal(); }
 
@@ -112,6 +111,7 @@ public class BiterAgent : Agent
     private Quaternion _initialMouthRotation;
 
     public GameObject Environment;
+    public Vector2 OriginalPosition;
 
     public int CurrentEpisode = 0;
     public float CumulativeReward = 0f;
@@ -121,7 +121,7 @@ public class BiterAgent : Agent
     private List<State> _states;
     private State _currentState;
 
-    private Vector2 _originalPosition;
+    
 
 
  
@@ -140,10 +140,10 @@ public class BiterAgent : Agent
         _states.Add(new WanderingState(gameObject));
         _states.Add(new ChasingState(gameObject));
 
-        if (DebugMode) _currentState = _states[1];
-        else _currentState = _states[0];
+        if (DebugMode) ChangeState(1);
+        else ChangeState(0);
 
-        _originalPosition = transform.position;
+        OriginalPosition = transform.position;
   
 
         _rigidBody = GetComponent<Rigidbody2D>();
@@ -187,7 +187,7 @@ public class BiterAgent : Agent
 
     public void ChangeState(int index)
     {
-        _currentState.OnExit();
+        if (_currentState != null) _currentState.OnExit();
         _currentState = _states[index];
         _currentState.OnEnter();
     }
@@ -208,7 +208,7 @@ public class BiterAgent : Agent
 
     private void SpawnObjects()
     {
-        transform.localPosition = _originalPosition;
+        transform.localPosition = OriginalPosition;
 
         if (DebugMode == true) RandomizeGoal();
 
@@ -319,15 +319,12 @@ public class BiterAgent : Agent
 
     }
 
-    /*
+    
     public void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.gameObject.CompareTag("Goal"))
-        {
-            GoalReached();
-        }
+      //  Debug.Log("Trigger");
     }
-    */
+    
     private void GoalReached()
     {
         AddReward(1.0f);

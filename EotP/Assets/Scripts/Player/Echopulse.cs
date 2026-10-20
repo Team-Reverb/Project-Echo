@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
@@ -47,6 +49,7 @@ public class EchoPulse : MonoBehaviour
 
     private void Update()
     {
+        UpdateColliderShape();
         if (IsExpanding)
             UpdateWave();
         else
@@ -95,5 +98,19 @@ public class EchoPulse : MonoBehaviour
             float angle = i * Mathf.PI * 2f / segments;
             line.SetPosition(i, new Vector3(Mathf.Cos(angle), Mathf.Sin(angle), 0f) * Radius);
         }
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        Debug.Log(collision.gameObject.name);
+    }
+
+    public void UpdateColliderShape()
+    {
+        LineRenderer renderer = GetComponent<LineRenderer>();
+        CircleCollider2D circle = GetComponent<CircleCollider2D>();
+
+        circle.radius = Radius;
+
     }
 }

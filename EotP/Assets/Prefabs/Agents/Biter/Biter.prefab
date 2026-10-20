@@ -627,7 +627,7 @@ GameObject:
   - component: {fileID: 599704503814702249}
   m_Layer: 3
   m_Name: Biter
-  m_TagString: Untagged
+  m_TagString: Agent
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -831,6 +831,7 @@ MonoBehaviour:
   _rotationSpeed: 180
   DebugMode: 0
   Environment: {fileID: 0}
+  OriginalPosition: {x: 0, y: 0}
   CurrentEpisode: 0
   CumulativeReward: 0
   PatrolPoints: []

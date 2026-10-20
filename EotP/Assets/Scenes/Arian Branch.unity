@@ -2054,7 +2054,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4435728048310178723, guid: 8c2c678ee3d0b9547be66833d928b16c, type: 3}
       propertyPath: PatrolPoints.Array.data[3].y
-      value: 9
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4435728048310178723, guid: 8c2c678ee3d0b9547be66833d928b16c, type: 3}
       propertyPath: PatrolPoints.Array.data[4].x
@@ -2062,7 +2062,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4435728048310178723, guid: 8c2c678ee3d0b9547be66833d928b16c, type: 3}
       propertyPath: PatrolPoints.Array.data[4].y
-      value: 17
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 4435728048310178723, guid: 8c2c678ee3d0b9547be66833d928b16c, type: 3}
       propertyPath: PatrolPoints.Array.data[5].x
@@ -2070,7 +2070,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4435728048310178723, guid: 8c2c678ee3d0b9547be66833d928b16c, type: 3}
       propertyPath: PatrolPoints.Array.data[5].y
-      value: 1
+      value: 17
       objectReference: {fileID: 0}
     - target: {fileID: 4435728048310178723, guid: 8c2c678ee3d0b9547be66833d928b16c, type: 3}
       propertyPath: PatrolPoints.Array.data[6].x
@@ -2086,7 +2086,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4435728048310178723, guid: 8c2c678ee3d0b9547be66833d928b16c, type: 3}
       propertyPath: PatrolPoints.Array.data[7].y
-      value: 17
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 4435728048310178723, guid: 8c2c678ee3d0b9547be66833d928b16c, type: 3}
       propertyPath: PatrolPoints.Array.data[8].x
@@ -2100,6 +2100,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Biter
       objectReference: {fileID: 0}
+    - target: {fileID: 5153534638352589726, guid: 8c2c678ee3d0b9547be66833d928b16c, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 9dfc825aed78fcd4ba02077103263b40, type: 2}
     - target: {fileID: 7635521586739234902, guid: 8c2c678ee3d0b9547be66833d928b16c, type: 3}
       propertyPath: m_LocalPosition.x
       value: 120.5
