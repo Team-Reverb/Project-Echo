@@ -9,10 +9,17 @@ using System.Collections.Generic;
 using Unity.InferenceEngine;
 using Random = UnityEngine.Random;
 using Unity.Mathematics;
+using Unity.MLAgents.Policies;
 
 public  class State
 {
     protected BiterAgent _agent;
+
+    public State(GameObject agent)
+    {
+        _agent = agent.GetComponent<BiterAgent>();
+    }
+    
 
     public virtual void OnEnter() { }
 
@@ -25,6 +32,12 @@ public  class State
 public class WanderingState : State
 {
     private Vector2 _goal;
+
+    public WanderingState(GameObject agent) : base(agent)
+    {
+
+    }
+
     public override void OnEnter() 
     {
         RandomGoal();
@@ -37,6 +50,7 @@ public class WanderingState : State
 
     public override void OnUpdate() 
     {
+        Debug.Log("R");
         GameObject gameObject = _agent.gameObject;
         Vector2 sub = _goal - new Vector2(gameObject.transform.position.x, gameObject.transform.position.y);
 
@@ -44,7 +58,7 @@ public class WanderingState : State
 
         if (sub.magnitude < 0.25f) { RandomGoal(); }
 
-        if (_agent.noticedPoints.Count > 0) { _agent.ChangeState(1); }
+        if (_agent._goal != null) { _agent.ChangeState(1); }
     }
 
     public override void OnExit() 
@@ -55,9 +69,17 @@ public class WanderingState : State
 
 public class ChasingState : State
 {
+
+    public ChasingState(GameObject agent) : base(agent)
+    {
+
+    }
+
     public override void OnEnter() 
     {
-        _agent.GetComponent<DecisionRequester>().enabled = true;
+
+        //  _agent.GetComponent<BehaviorParameters>().Model = _agent.NeuralNetwork;
+        _agent.GetComponent<BehaviorParameters>().BehaviorType = BehaviorType.InferenceOnly;
     }
 
     public override void OnUpdate() 
@@ -67,7 +89,8 @@ public class ChasingState : State
 
     public override void OnExit() 
     {
-        _agent.GetComponent<DecisionRequester>().enabled = false;
+        // _agent.GetComponent<BehaviorParameters>().Model = null;
+        _agent.GetComponent<BehaviorParameters>().BehaviorType = BehaviorType.HeuristicOnly;
     }
 }
 
@@ -75,7 +98,7 @@ public class BiterAgent : Agent
 
 {
 
-    [SerializeField] private GameObject _goal;
+    public GameObject _goal;
     [SerializeField] private GameObject _dummyGoal;
     public List<Vector2> noticedPoints;
 
@@ -98,6 +121,8 @@ public class BiterAgent : Agent
     private List<State> _states;
     private State _currentState;
 
+    private Vector2 _originalPosition;
+
 
  
 
@@ -112,17 +137,25 @@ public class BiterAgent : Agent
       
 
         _states = new List<State>();
-        _states.Add(new WanderingState());
-        _states.Add(new ChasingState());
+        _states.Add(new WanderingState(gameObject));
+        _states.Add(new ChasingState(gameObject));
 
         if (DebugMode) _currentState = _states[1];
         else _currentState = _states[0];
+
+        _originalPosition = transform.position;
   
 
         _rigidBody = GetComponent<Rigidbody2D>();
 
 
     }
+
+    void Update()
+    {
+        _currentState.OnUpdate();
+    }
+
     void LateUpdate()
     {
         transform.Find("Mouth").gameObject.transform.rotation = _initialMouthRotation;
@@ -154,7 +187,9 @@ public class BiterAgent : Agent
 
     public void ChangeState(int index)
     {
+        _currentState.OnExit();
         _currentState = _states[index];
+        _currentState.OnEnter();
     }
 
     public override void OnEpisodeBegin()
@@ -173,8 +208,7 @@ public class BiterAgent : Agent
 
     private void SpawnObjects()
     {
-        transform.localRotation = Quaternion.identity;
-        transform.localPosition = Vector2.zero;
+        transform.localPosition = _originalPosition;
 
         if (DebugMode == true) RandomizeGoal();
 
@@ -195,6 +229,16 @@ public class BiterAgent : Agent
 
     public override void CollectObservations(VectorSensor sensor)
     {
+        if (_goal == null)
+
+        {
+            for (int i = 0; i < 4; i++) // 4 is the number of observations, we're doing dummy observations so no errors
+            {
+                sensor.AddObservation(0f);
+            }
+            return;
+        }
+        ;
         float goalPosX_normalized = _goal.transform.localPosition.x / 5f;
         float goalPosY_normalized = _goal.transform.localPosition.y / 5f;
 
@@ -214,6 +258,8 @@ public class BiterAgent : Agent
         var discreteActionsOut = actionsOut.DiscreteActions;
 
         discreteActionsOut[0] = 0;
+
+        if (!DebugMode) { return; }
 
         if (Input.GetKey(KeyCode.UpArrow))
         {
