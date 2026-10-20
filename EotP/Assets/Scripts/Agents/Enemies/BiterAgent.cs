@@ -162,10 +162,10 @@ public class BiterAgent : Agent
     private void RandomizeGoal()
     {
         Debug.Log("Randomizing");
-        int[] vals = { -7, 0, 7 };
+        float[] vals = { -8.5f, 0, 8.5f };
 
-        int x = vals[Random.Range(0, 2)];
-        int y = vals[Random.Range(0, 2)];
+        float x = vals[Random.Range(0, 3)];
+        float y = vals[Random.Range(0, 3)];
 
         Vector2 goalPosition = new Vector2(Environment.transform.position.x, Environment.transform.position.y) + new Vector2(x, y);
 
