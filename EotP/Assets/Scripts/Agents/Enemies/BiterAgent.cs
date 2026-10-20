@@ -8,6 +8,7 @@ using UnityEngine.UIElements;
 using System.Collections.Generic;
 using Unity.InferenceEngine;
 using Random = UnityEngine.Random;
+using Unity.Mathematics;
 
 public  class State
 {
@@ -39,9 +40,11 @@ public class WanderingState : State
         GameObject gameObject = _agent.gameObject;
         Vector2 sub = _goal - new Vector2(gameObject.transform.position.x, gameObject.transform.position.y);
 
-        _agent.gameObject.GetComponent<Rigidbody2D>().AddForce(Vector2.Normalize(sub) * _agent._moveSpeed * Time.deltaTime, ForceMode2D.Force);
+        _agent.gameObject.GetComponent<Rigidbody2D>().AddForce(Vector2.Normalize(sub) * (_agent._moveSpeed / 1.5f )* Time.deltaTime, ForceMode2D.Force);
 
         if (sub.magnitude < 0.25f) { RandomGoal(); }
+
+        if (_agent.noticedPoints.Count > 0) { _agent.ChangeState(1); }
     }
 
     public override void OnExit() 
@@ -73,9 +76,12 @@ public class BiterAgent : Agent
 {
 
     [SerializeField] private GameObject _goal;
+    [SerializeField] private GameObject _dummyGoal;
+    public List<Vector2> noticedPoints;
 
     public float _moveSpeed = 1.5f;
     [SerializeField] private float _rotationSpeed = 180f;
+    public bool DebugMode;
     
 
     private SpriteRenderer _renderer;
@@ -108,7 +114,10 @@ public class BiterAgent : Agent
         _states = new List<State>();
         _states.Add(new WanderingState());
         _states.Add(new ChasingState());
-        _currentState = _states[1];
+
+        if (DebugMode) _currentState = _states[1];
+        else _currentState = _states[0];
+  
 
         _rigidBody = GetComponent<Rigidbody2D>();
 
@@ -126,12 +135,24 @@ public class BiterAgent : Agent
         
 
 
-        
+    }
 
+    public void Alert(Vector2 alertLocation)
+    {
+        if (
+            _goal != null 
+            && (alertLocation - (Vector2)gameObject.transform.position).magnitude > ((Vector2)_goal.transform.position - (Vector2)gameObject.transform.position).magnitude
+            )
+        {
+            return;
+        }
+
+        GameObject alertGoal = Instantiate(_dummyGoal,alertLocation, new Quaternion(0,0,0,0));
+        _goal = alertGoal;
     }
     
 
-    private void ChangeState(int index)
+    public void ChangeState(int index)
     {
         _currentState = _states[index];
     }
@@ -155,7 +176,7 @@ public class BiterAgent : Agent
         transform.localRotation = Quaternion.identity;
         transform.localPosition = Vector2.zero;
 
-        RandomizeGoal();
+        if (DebugMode == true) RandomizeGoal();
 
     }
 
@@ -268,11 +289,19 @@ public class BiterAgent : Agent
 
         RandomizeGoal();
 
+        if (!DebugMode) { 
+            Destroy(_goal);
+            _goal = null;
+            ChangeState(0);
+        }
+
         //EndEpisode();
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        if (!DebugMode) return;
+
         if (collision.gameObject.CompareTag("Wall"))
         {
            // Debug.Log("Collision");
@@ -292,6 +321,7 @@ public class BiterAgent : Agent
 
     private void OnCollisionStay2D(Collision2D collision)
     {
+
         if (collision.gameObject.CompareTag("Wall"))
         {
             AddReward(-0.01f * Time.fixedDeltaTime);
