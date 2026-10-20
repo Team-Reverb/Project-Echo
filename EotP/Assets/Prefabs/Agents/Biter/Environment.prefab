@@ -191,7 +191,7 @@ MonoBehaviour:
     hasUpgradedBrainParametersWithActionSpec: 1
   m_Model: {fileID: 5022602860645237092, guid: f5ab8f5c9a548a84195c40a054e9a0ae, type: 3}
   m_InferenceDevice: 0
-  m_BehaviorType: 2
+  m_BehaviorType: 0
   m_BehaviorName: BiterAgent
   TeamId: 0
   m_UseChildSensors: 1
