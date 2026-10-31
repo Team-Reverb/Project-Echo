@@ -13,7 +13,7 @@ public class PlayerController : MonoBehaviour
 
     [Header("Jump Variables")]
     [SerializeField] private float tapJumpForce = 15f;
-    [SerializeField] private float heldJumpForce = 20f;
+    [SerializeField] private float heldJumpForce = 25f;
     [SerializeField] private float holdThreshold = 0.3f;
     [SerializeField] private float coyoteTime = 0.1f;
 
