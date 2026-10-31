@@ -122,6 +122,13 @@ MonoBehaviour:
   currentHealth: 0
   pulseCooldownDefault: 1
   pulseCooldownCombat: 5
+  comboHitDurations:
+  - 0.25
+  - 0.167
+  - 0.125
+  comboWindow: 0.2
+  comboCooldown: 0.5
+  hurtDuration: 0.083
   actionStateDuration: 0.3
 --- !u!1 &6236279683607407643
 GameObject:
@@ -133,6 +140,8 @@ GameObject:
   m_Component:
   - component: {fileID: 3094692546780089186}
   - component: {fileID: 8254903115487819304}
+  - component: {fileID: 84616114812329483}
+  - component: {fileID: 5997504381995563983}
   m_Layer: 0
   m_Name: Visual
   m_TagString: Untagged
@@ -215,3 +224,40 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
   m_BlendShapeWeights: []
+--- !u!95 &84616114812329483
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6236279683607407643}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: c7e6a6cc615b7544faf957b27c054e7f, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &5997504381995563983
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6236279683607407643}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2228cf92ebb438549b0ebb62182ec990, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerAnimator
+  player: {fileID: 0}
+  animator: {fileID: 0}
+  fallDelay: 0.06

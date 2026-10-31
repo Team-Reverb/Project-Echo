@@ -6,5 +6,6 @@ public enum CharacterState
     Falling,
     Attacking,
     Interacting,
-    Pulsing
+    Pulsing,
+    Hurt
 }

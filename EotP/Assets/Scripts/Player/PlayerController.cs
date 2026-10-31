@@ -28,8 +28,22 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float pulseCooldownDefault = 1f;
     [SerializeField] private float pulseCooldownCombat = 5f;
 
+    [Header("Attack Combo")]
+    [SerializeField] private float[] comboHitDurations = { 0.4f, 0.4f, 0.5f };
+    [SerializeField] private float comboWindow = 0.3f;   
+    [SerializeField] private float comboCooldown = 0.5f;
+
+    [Header("Hurt")]
+    [SerializeField] private float hurtDuration = 0.3f;
+
+
     [Header("State Machine")]
     [SerializeField] private float actionStateDuration = 0.3f;
+
+    // Events
+
+    public event System.Action<int> AttackStarted;
+    public event System.Action Damaged;
 
     // Private Variables
 
@@ -40,7 +54,13 @@ public class PlayerController : MonoBehaviour
     private float pulseCooldownTimer;
     private float pulseCooldownDuration;
     private float actionStateTimer;
+    private CharacterState actionState = CharacterState.Idle;
+    private CharacterState movementState = CharacterState.Idle;
     private CharacterState currentState = CharacterState.Idle;
+    private int comboIndex;
+    private bool attackQueued;
+    private float lastAttackEndTime = -1f;
+    private float attackLockedUntil;
 
     private Rigidbody2D rb;
     private PlayerControls controls;
@@ -55,9 +75,13 @@ public class PlayerController : MonoBehaviour
     public bool IsPulseReady => pulseCooldownTimer <= 0f;
     public float PulseCooldownNormalized => pulseCooldownDuration > 0f ? Mathf.Clamp01(pulseCooldownTimer / pulseCooldownDuration) : 0f;
     public CharacterState CurrentState => currentState;
+    public CharacterState MovementState => movementState;
     private bool CanJump => Time.time - lastGroundedTime <= coyoteTime;
+    private bool IsAttacking => actionStateTimer > 0f && actionState == CharacterState.Attacking;
+    private bool IsHurt => actionStateTimer > 0f && actionState == CharacterState.Hurt;
 
-    // Unity Lifecycle
+
+    // Unity
 
     void Awake()
     {
@@ -95,11 +119,9 @@ public class PlayerController : MonoBehaviour
         HandleCoyoteTimer();
         HandlePulseCooldownTimer();
         HandleActionStateTimer();
-
-        if (actionStateTimer <= 0f)
-        {
-            UpdateMovementState();
-        }
+        HandleHeldAttack();
+        UpdateMovementState();
+        UpdateCurrentState();
     }
 
     void FixedUpdate()
@@ -164,8 +186,22 @@ public class PlayerController : MonoBehaviour
 
     void OnAttack(InputAction.CallbackContext context)
     {
-        FeaturePlaceholderLog("Attack");
-        EnterActionState(CharacterState.Attacking);
+        if (comboHitDurations.Length == 0) return;
+        if (IsHurt) return;
+        if (Time.time < attackLockedUntil) return;
+
+        if (IsAttacking) 
+        {
+            attackQueued = true;
+            return;
+        }
+
+        if (Time.time - lastAttackEndTime > comboWindow)
+        {
+            comboIndex = 0;
+        }
+
+        StartAttack();
     }
 
     // Movement Handling
@@ -220,14 +256,61 @@ public class PlayerController : MonoBehaviour
         pulseCooldownTimer = pulseCooldownDuration;
     }
 
+    // Attack Combo
+
+    void StartAttack()
+    {
+        attackQueued = false;
+        FeaturePlaceholderLog("Attack " + (comboIndex + 1));
+        EnterActionState(CharacterState.Attacking, comboHitDurations[comboIndex]);
+        AttackStarted?.Invoke(comboIndex);
+    }
+
+    void OnAttackFinished()
+    {
+        lastAttackEndTime = Time.time;
+        comboIndex++;
+
+        if (comboIndex >= comboHitDurations.Length)
+        {
+            ResetCombo();
+            attackLockedUntil = Time.time + comboCooldown;
+            return;
+        }
+
+        if (attackQueued)
+        {
+            StartAttack();
+        }
+    }
+
+    void HandleHeldAttack()
+    {
+        if (IsAttacking && controls.Player.Attack.IsPressed())
+        {
+            attackQueued = true;
+        }
+    }
+
+    void ResetCombo()
+    {
+        comboIndex = 0;
+        attackQueued = false;
+    }
+
     // Character State Handling
 
     void HandleActionStateTimer()
     {
-        if (actionStateTimer > 0f)
+        if (actionStateTimer <= 0f) return;
+
+        actionStateTimer -= Time.deltaTime;
+
+        if (actionStateTimer <= 0f && actionState == CharacterState.Attacking)
         {
-            actionStateTimer -= Time.deltaTime;
+            OnAttackFinished();
         }
+
     }
 
     void UpdateMovementState()
@@ -236,34 +319,57 @@ public class PlayerController : MonoBehaviour
         {
             if (rb.linearVelocity.y > 0f)
             {
-                currentState = CharacterState.Jumping;
+                movementState = CharacterState.Jumping;
             }
             else
             {
-                currentState = CharacterState.Falling;
+                movementState = CharacterState.Falling;
             }
         }
         else if (Mathf.Abs(moveInput) > 0.01f)
         {
-            currentState = CharacterState.Walking;
+            movementState = CharacterState.Walking;
         }
         else
         {
-            currentState = CharacterState.Idle;
+            movementState = CharacterState.Idle;
         }
     }
 
+    void UpdateCurrentState()
+    {
+        currentState = actionStateTimer > 0f ? actionState : movementState;
+    }
+
+
     void EnterActionState(CharacterState state)
     {
-        currentState = state;
-        actionStateTimer = actionStateDuration;
+        EnterActionState(state, actionStateDuration);
     }
+
+    void EnterActionState(CharacterState state, float duration)
+    {
+        bool busy = IsAttacking || IsHurt;
+        if (busy && (state == CharacterState.Pulsing || state == CharacterState.Interacting)) return;
+
+        actionState = state;
+        actionStateTimer = duration;
+        currentState = state;
+    }
+
 
     // Health and Combat
 
     public void TakeDamage(float amount)
     {
-        currentHealth = Mathf.Max(currentHealth - amount, 0);
+        if (amount <= 0f || currentHealth <= 0f) return;
+
+        currentHealth = Mathf.Max(currentHealth - amount, 0f);
+
+        ResetCombo();
+        EnterActionState(CharacterState.Hurt, hurtDuration);
+        Damaged?.Invoke();
+
     }
 
     public void Heal(float amount)
