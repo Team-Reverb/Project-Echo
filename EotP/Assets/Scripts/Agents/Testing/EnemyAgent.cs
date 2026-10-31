@@ -71,7 +71,7 @@ public class EnemyAgent : Agent
 
     }
 
-     public override void Heuristic(in ActionBuffers actionsOut)
+    public override void Heuristic(in ActionBuffers actionsOut)
     {
         var discreteActionsOut = actionsOut.DiscreteActions;
 
@@ -133,6 +133,9 @@ public class EnemyAgent : Agent
     private void GoalReached()
     {
         AddReward(1.0f);
+
+
+
         CumulativeReward = GetCumulativeReward();
 
         EndEpisode();
