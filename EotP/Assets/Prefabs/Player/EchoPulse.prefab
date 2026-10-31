@@ -157,13 +157,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d984571a84083b43a38910b9f2b8231, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EchoPulse
-  speed: 14
-  maxRadius: 15
+  speed: 8
+  maxRadius: 10
   segments: 64
   lineWidth: 0.1
   pulseLight: {fileID: -2786040444057605058}
   lightIntensity: 2
   lingerDuration: 4
+  blockingLayers:
+    serializedVersion: 2
+    m_Bits: 128
+  wallInset: 0.02
 --- !u!114 &-2786040444057605058
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -198,8 +202,8 @@ MonoBehaviour:
   m_NormalMapQuality: 2
   m_UseNormalMap: 0
   m_ShadowsEnabled: 1
-  m_ShadowIntensity: 0.75
-  m_ShadowSoftness: 0.3
+  m_ShadowIntensity: 1
+  m_ShadowSoftness: 0
   m_ShadowSoftnessFalloffIntensity: 0.5
   m_ShadowVolumeIntensityEnabled: 0
   m_ShadowVolumeIntensity: 0.75
