@@ -157,8 +157,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d984571a84083b43a38910b9f2b8231, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EchoPulse
-  speed: 12
-  maxRadius: 10
+  speed: 14
+  maxRadius: 15
   segments: 64
   lineWidth: 0.1
   pulseLight: {fileID: -2786040444057605058}
