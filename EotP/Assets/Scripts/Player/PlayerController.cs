@@ -7,7 +7,7 @@ public class PlayerController : MonoBehaviour
     // Inspector Variables
 
     [Header("References")]
-    [SerializeField] private EchoPulse echoPulsePrefab;
+    public EchoPulse echoPulsePrefab;
 
     [Header("Movement Variables")]
     [SerializeField] private float moveSpeed = 6f;

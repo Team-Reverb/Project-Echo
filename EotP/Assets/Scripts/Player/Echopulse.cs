@@ -13,7 +13,7 @@ public class EchoPulse : MonoBehaviour
 {
     [Header("Wave")]
     [SerializeField] private float speed = 12f;          // world units per second
-    [SerializeField] private float maxRadius = 10f;      // wave stops growing here
+    public float maxRadius = 10f;      // wave stops growing here
     [SerializeField] private int segments = 64;          // circle smoothness (also number of wall rays)
     [SerializeField] private float lineWidth = 0.1f;
 

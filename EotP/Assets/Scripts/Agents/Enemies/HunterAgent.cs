@@ -18,10 +18,16 @@ public class HunterAgent : Agent
 
     private SpriteRenderer _renderer;
     private Rigidbody2D _rigidBody;
+
+    private GameObject _environment;
+
+    private bool _playerRevealed;
     public int CurrentEpisode = 0;
     public float CumulativeReward = 0f;
 
     public float _moveSpeed = 1.5f;
+
+    public GameObject Player;
 
 
     void Start()
@@ -60,8 +66,19 @@ public class HunterAgent : Agent
 
     public override void CollectObservations(VectorSensor sensor)
     {
-   
+        float agentPosX_normalized = transform.localPosition.x / 5f;
+        float agentPosY_normalized = transform.localPosition.y / 5f;
+        float playerPosX_normalized = (Player.transform.position - _environment.transform.position).x / 5f; // relative
+        float playerPosY_normalized = (Player.transform.position - _environment.transform.position).y / 5f; // relative
+        float playerPulseCooldown_normalized = Player.GetComponent<PlayerController>().PulseCooldownNormalized;
+        _playerRevealed = IsRevealed();
 
+        sensor.AddObservation(agentPosX_normalized);
+        sensor.AddObservation(agentPosY_normalized);
+        sensor.AddObservation(playerPosX_normalized);
+        sensor.AddObservation(playerPosY_normalized);
+        sensor.AddObservation(playerPulseCooldown_normalized);
+        sensor.AddObservation(_playerRevealed);
     }
 
     public override void Heuristic(in ActionBuffers actionsOut)
@@ -88,9 +105,39 @@ public class HunterAgent : Agent
     {
         MoveAgent(actions.DiscreteActions);
 
-        AddReward(-2f / MaxStep);
+        if (Vector3.Magnitude(gameObject.transform.position -Player.gameObject.transform.position) > 2f)
+        {
+            AddReward(-2f / MaxStep);
+        }
+
+        if (_playerRevealed)
+        {
+            // wip
+        }
 
         CumulativeReward = GetCumulativeReward();
+    }
+
+    bool IsRevealed()
+    {
+
+        Vector3 direction = (Player.gameObject.transform.position - gameObject.transform.position);
+        float distance = direction.magnitude;
+        direction = direction.normalized;
+
+        RaycastHit hit;
+        if (
+            Physics.Raycast(gameObject.transform.position, direction, out hit, Mathf.Infinity, LayerMask.GetMask("Wall", "Character"))
+            ||
+            distance > Player.GetComponent<PlayerController>().echoPulsePrefab.GetComponent<EchoPulse>().maxRadius
+           )
+        {
+            return false;
+        }
+
+
+        return true;
+
     }
 
     public void MoveAgent(ActionSegment<int> act)
