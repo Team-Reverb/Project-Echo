@@ -1507,7 +1507,7 @@ MonoBehaviour:
   _moveSpeed: 1.5
   Player: {fileID: 1394491173}
   EngagementRadius: 6
-  ArenaHalfSize: {x: 30, y: 15}
+  ArenaHalfSize: {x: 15, y: 7.5}
   MaxPlayerSpeed: 15
   MaxPulseRadius: 20
   RevealMemory: 5
