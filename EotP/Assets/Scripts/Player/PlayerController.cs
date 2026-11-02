@@ -282,7 +282,7 @@ public class PlayerController : MonoBehaviour
         size = new Vector2(swordReach, swordHeight);
     }
 
-    // Select the player in the Scene view for sword hitbox
+    // Select the player in the Scene view to see sword hitbox
     void OnDrawGizmosSelected()
     {
         GetSwordArea(out Vector2 center, out Vector2 size);
