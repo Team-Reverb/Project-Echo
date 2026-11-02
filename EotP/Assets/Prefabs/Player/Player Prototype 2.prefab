@@ -113,10 +113,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   echoPulsePrefab: {fileID: 8821353449132841125, guid: 32a2d3f314526334799328a73f99350c, type: 3}
   moveSpeed: 6
-  jumpSpeed: 15
-  minJumpTime: 0.05
-  maxJumpTime: 0.5
-  jumpCutMultiplier: 0.2
+  jumpSpeed: 10
+  minJumpTime: 0.1
+  maxJumpTime: 0.4
+  jumpCutMultiplier: 0.05
   coyoteTime: 0.1
   isGrounded: 0
   maxHealth: 100
