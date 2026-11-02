@@ -123,8 +123,8 @@ MonoBehaviour:
   currentHealth: 0
   pulseCooldownDefault: 1
   pulseCooldownCombat: 5
-  swordReach: 1.2
-  swordHeight: 1.2
+  swordReach: 1
+  swordHeight: 0.6
   swordDamage: 10
   comboCooldown: 0.5
   enemyLayers:

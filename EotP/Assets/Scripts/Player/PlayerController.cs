@@ -259,9 +259,9 @@ public class PlayerController : MonoBehaviour
             GameObject target = hit.attachedRigidbody != null ? hit.attachedRigidbody.gameObject : hit.gameObject;
             if (!struck.Add(target)) continue;
 
+            Debug.Log("Sword hit " + target.name);
             // public void TakeDamage(float amount) method in enemy will receive a hit
             target.SendMessage("TakeDamage", swordDamage, SendMessageOptions.DontRequireReceiver);
-            Debug.Log("Sword hit " + target.name);
         }
     }
 
