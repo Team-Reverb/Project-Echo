@@ -113,23 +113,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   echoPulsePrefab: {fileID: 8821353449132841125, guid: 32a2d3f314526334799328a73f99350c, type: 3}
   moveSpeed: 6
-  tapJumpForce: 15
-  heldJumpForce: 20
-  holdThreshold: 0.3
+  jumpSpeed: 15
+  minJumpTime: 0.05
+  maxJumpTime: 0.5
+  jumpCutMultiplier: 0.2
   coyoteTime: 0.1
   isGrounded: 0
   maxHealth: 100
   currentHealth: 0
   pulseCooldownDefault: 1
   pulseCooldownCombat: 5
-  comboHitDurations:
-  - 0.25
-  - 0.167
-  - 0.125
-  comboWindow: 0.2
+  swordReach: 1.2
+  swordHeight: 1.2
+  swordDamage: 10
   comboCooldown: 0.5
-  hurtDuration: 0.083
-  actionStateDuration: 0.3
+  enemyLayers:
+    serializedVersion: 2
+    m_Bits: 256
 --- !u!1 &6236279683607407643
 GameObject:
   m_ObjectHideFlags: 0
@@ -259,5 +259,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerAnimator
   player: {fileID: 0}
+  body: {fileID: 0}
   animator: {fileID: 0}
-  fallDelay: 0.06

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -12,9 +13,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float moveSpeed = 6f;
 
     [Header("Jump Variables")]
-    [SerializeField] private float tapJumpForce = 15f;
-    [SerializeField] private float heldJumpForce = 25f;
-    [SerializeField] private float holdThreshold = 0.3f;
+    [SerializeField] private float jumpSpeed = 15f;
+    [SerializeField] private float minJumpTime = 0.05f;
+    [SerializeField] private float maxJumpTime = 0.5f;
+    [SerializeField] private float jumpCutMultiplier = 0.2f;
     [SerializeField] private float coyoteTime = 0.1f;
 
     [Header("State")]
@@ -28,41 +30,31 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float pulseCooldownDefault = 1f;
     [SerializeField] private float pulseCooldownCombat = 5f;
 
-    [Header("Attack Combo")]
-    [SerializeField] private float[] comboHitDurations = { 0.4f, 0.4f, 0.5f };
-    [SerializeField] private float comboWindow = 0.3f;   
+    [Header("Standard Sword")]
+    [SerializeField] private float swordReach = 1.2f;
+    [SerializeField] private float swordHeight = 1.2f;
+    [SerializeField] private float swordDamage = 10f;
     [SerializeField] private float comboCooldown = 0.5f;
-
-    [Header("Hurt")]
-    [SerializeField] private float hurtDuration = 0.3f;
-
-
-    [Header("State Machine")]
-    [SerializeField] private float actionStateDuration = 0.3f;
+    [SerializeField] private LayerMask enemyLayers;
 
     // Events
 
-    public event System.Action<int> AttackStarted;
+    public event System.Action AttackRequested;
     public event System.Action Damaged;
 
     // Private Variables
 
     private bool isInCombat;
     private float moveInput;
-    private float jumpPressTime = -1f;
+    private bool isJumping;
+    private float jumpTimer;
     private float lastGroundedTime = -1f;
     private float pulseCooldownTimer;
     private float pulseCooldownDuration;
-    private float actionStateTimer;
-    private CharacterState actionState = CharacterState.Idle;
-    private CharacterState movementState = CharacterState.Idle;
-    private CharacterState currentState = CharacterState.Idle;
-    private int comboIndex;
-    private bool attackQueued;
-    private float lastAttackEndTime = -1f;
     private float attackLockedUntil;
 
     private Rigidbody2D rb;
+    private Collider2D col;
     private PlayerControls controls;
 
     // Read-only Values for Other Systems
@@ -74,20 +66,17 @@ public class PlayerController : MonoBehaviour
     public float HealthNormalized => maxHealth > 0 ? currentHealth / maxHealth : 0f;
     public bool IsPulseReady => pulseCooldownTimer <= 0f;
     public float PulseCooldownNormalized => pulseCooldownDuration > 0f ? Mathf.Clamp01(pulseCooldownTimer / pulseCooldownDuration) : 0f;
-    public CharacterState CurrentState => currentState;
-    public CharacterState MovementState => movementState;
     private bool CanJump => Time.time - lastGroundedTime <= coyoteTime;
-    private bool IsAttacking => actionStateTimer > 0f && actionState == CharacterState.Attacking;
-    private bool IsHurt => actionStateTimer > 0f && actionState == CharacterState.Hurt;
-
 
     // Unity
 
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        col = GetComponent<Collider2D>();
         controls = new PlayerControls();
         currentHealth = maxHealth;
+
     }
 
     void OnEnable()
@@ -95,10 +84,8 @@ public class PlayerController : MonoBehaviour
         controls.Player.Move.performed += OnMove;
         controls.Player.Move.canceled += OnMove;
         controls.Player.Jump.started += OnJumpPressed;
-        controls.Player.Jump.canceled += OnJumpReleased;
         controls.Player.Pulse.performed += OnPulse;
         controls.Player.Interact.performed += OnInteract;
-        controls.Player.Attack.performed += OnAttack;
         controls.Player.Enable();
     }
 
@@ -107,10 +94,8 @@ public class PlayerController : MonoBehaviour
         controls.Player.Move.performed -= OnMove;
         controls.Player.Move.canceled -= OnMove;
         controls.Player.Jump.started -= OnJumpPressed;
-        controls.Player.Jump.canceled -= OnJumpReleased;
         controls.Player.Pulse.performed -= OnPulse;
         controls.Player.Interact.performed -= OnInteract;
-        controls.Player.Attack.performed -= OnAttack;
         controls.Player.Disable();
     }
 
@@ -118,14 +103,12 @@ public class PlayerController : MonoBehaviour
     {
         HandleCoyoteTimer();
         HandlePulseCooldownTimer();
-        HandleActionStateTimer();
-        HandleHeldAttack();
-        UpdateMovementState();
-        UpdateCurrentState();
+        HandleAttackInput();
     }
 
     void FixedUpdate()
     {
+        HandleJump();
         HandleMovement();
     }
 
@@ -138,25 +121,15 @@ public class PlayerController : MonoBehaviour
 
     void OnJumpPressed(InputAction.CallbackContext context)
     {
-        if (CanJump)
-        {
-            jumpPressTime = Time.time;
-        }
-    }
+        if (!CanJump) return;
 
-    void OnJumpReleased(InputAction.CallbackContext context)
-    {
-        if (jumpPressTime < 0f) return;
-
-        float heldDuration = Time.time - jumpPressTime;
-        float appliedForce = heldDuration >= holdThreshold ? heldJumpForce : tapJumpForce;
+        isJumping = true;
+        jumpTimer = 0f;
+        lastGroundedTime = -1f;
 
         Vector2 velocity = rb.linearVelocity;
-        velocity.y = appliedForce;
+        velocity.y = jumpSpeed;
         rb.linearVelocity = velocity;
-
-        jumpPressTime = -1f;
-        lastGroundedTime = -1f;
     }
 
     void OnPulse(InputAction.CallbackContext context)
@@ -175,33 +148,11 @@ public class PlayerController : MonoBehaviour
 
         Instantiate(echoPulsePrefab, transform.position, Quaternion.identity);
         StartPulseCooldown();
-        EnterActionState(CharacterState.Pulsing);
     }
 
     void OnInteract(InputAction.CallbackContext context)
     {
         FeaturePlaceholderLog("Interact");
-        EnterActionState(CharacterState.Interacting);
-    }
-
-    void OnAttack(InputAction.CallbackContext context)
-    {
-        if (comboHitDurations.Length == 0) return;
-        if (IsHurt) return;
-        if (Time.time < attackLockedUntil) return;
-
-        if (IsAttacking) 
-        {
-            attackQueued = true;
-            return;
-        }
-
-        if (Time.time - lastAttackEndTime > comboWindow)
-        {
-            comboIndex = 0;
-        }
-
-        StartAttack();
     }
 
     // Movement Handling
@@ -224,6 +175,36 @@ public class PlayerController : MonoBehaviour
         scale.x = Mathf.Abs(scale.x) * Mathf.Sign(direction);
         transform.localScale = scale;
     }
+
+    void HandleJump()
+    {
+        if (!isJumping) return;
+
+        jumpTimer += Time.fixedDeltaTime;
+
+        bool held = controls.Player.Jump.IsPressed();
+        bool reachedMax = jumpTimer >= maxJumpTime;
+        bool letGo = !held && jumpTimer >= minJumpTime;
+        bool lostSpeed = rb.linearVelocity.y <= 0.1f;
+
+        if (reachedMax || letGo || lostSpeed)
+        {
+            isJumping = false;
+
+            if (letGo && !reachedMax && rb.linearVelocity.y > 0f)
+            {
+                Vector2 velocity = rb.linearVelocity;
+                velocity.y *= jumpCutMultiplier;
+                rb.linearVelocity = velocity;
+            }
+            return;
+        }
+
+        Vector2 rising = rb.linearVelocity;
+        rising.y = jumpSpeed;
+        rb.linearVelocity = rising;
+    }
+
 
     void HandleCoyoteTimer()
     {
@@ -256,107 +237,58 @@ public class PlayerController : MonoBehaviour
         pulseCooldownTimer = pulseCooldownDuration;
     }
 
-    // Attack Combo
+    // Standard Sword
 
-    void StartAttack()
+    void HandleAttackInput()
     {
-        attackQueued = false;
-        FeaturePlaceholderLog("Attack " + (comboIndex + 1));
-        EnterActionState(CharacterState.Attacking, comboHitDurations[comboIndex]);
-        AttackStarted?.Invoke(comboIndex);
-    }
-
-    void OnAttackFinished()
-    {
-        lastAttackEndTime = Time.time;
-        comboIndex++;
-
-        if (comboIndex >= comboHitDurations.Length)
+        if (controls.Player.Attack.IsPressed() && Time.time >= attackLockedUntil)
         {
-            ResetCombo();
-            attackLockedUntil = Time.time + comboCooldown;
-            return;
-        }
-
-        if (attackQueued)
-        {
-            StartAttack();
+            AttackRequested?.Invoke();
         }
     }
 
-    void HandleHeldAttack()
+    public void SwordHit()
     {
-        if (IsAttacking && controls.Player.Attack.IsPressed())
+        GetSwordArea(out Vector2 center, out Vector2 size);
+
+        Collider2D[] hits = Physics2D.OverlapBoxAll(center, size, 0f, enemyLayers);
+        HashSet<GameObject> struck = new HashSet<GameObject>();
+
+        foreach (Collider2D hit in hits)
         {
-            attackQueued = true;
+            GameObject target = hit.attachedRigidbody != null ? hit.attachedRigidbody.gameObject : hit.gameObject;
+            if (!struck.Add(target)) continue;
+
+            // public void TakeDamage(float amount) method in enemy will receive a hit
+            target.SendMessage("TakeDamage", swordDamage, SendMessageOptions.DontRequireReceiver);
+            Debug.Log("Sword hit " + target.name);
         }
     }
 
-    void ResetCombo()
+    public void StartAttackCooldown()
     {
-        comboIndex = 0;
-        attackQueued = false;
+        attackLockedUntil = Time.time + comboCooldown;
     }
 
-    // Character State Handling
-
-    void HandleActionStateTimer()
+    void GetSwordArea(out Vector2 center, out Vector2 size)
     {
-        if (actionStateTimer <= 0f) return;
+        Collider2D body = col != null ? col : GetComponent<Collider2D>();
+        Bounds bounds = body.bounds;
 
-        actionStateTimer -= Time.deltaTime;
+        float facing = Mathf.Sign(transform.localScale.x);
+        float frontEdge = facing > 0f ? bounds.max.x : bounds.min.x;
 
-        if (actionStateTimer <= 0f && actionState == CharacterState.Attacking)
-        {
-            OnAttackFinished();
-        }
-
+        center = new Vector2(frontEdge + facing * swordReach / 2f, bounds.center.y);
+        size = new Vector2(swordReach, swordHeight);
     }
 
-    void UpdateMovementState()
+    // Select the player in the Scene view for sword hitbox
+    void OnDrawGizmosSelected()
     {
-        if (!isGrounded)
-        {
-            if (rb.linearVelocity.y > 0f)
-            {
-                movementState = CharacterState.Jumping;
-            }
-            else
-            {
-                movementState = CharacterState.Falling;
-            }
-        }
-        else if (Mathf.Abs(moveInput) > 0.01f)
-        {
-            movementState = CharacterState.Walking;
-        }
-        else
-        {
-            movementState = CharacterState.Idle;
-        }
+        GetSwordArea(out Vector2 center, out Vector2 size);
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireCube(center, size);
     }
-
-    void UpdateCurrentState()
-    {
-        currentState = actionStateTimer > 0f ? actionState : movementState;
-    }
-
-
-    void EnterActionState(CharacterState state)
-    {
-        EnterActionState(state, actionStateDuration);
-    }
-
-    void EnterActionState(CharacterState state, float duration)
-    {
-        bool busy = IsAttacking || IsHurt;
-        if (busy && (state == CharacterState.Pulsing || state == CharacterState.Interacting)) return;
-
-        actionState = state;
-        actionStateTimer = duration;
-        currentState = state;
-    }
-
 
     // Health and Combat
 
@@ -365,11 +297,7 @@ public class PlayerController : MonoBehaviour
         if (amount <= 0f || currentHealth <= 0f) return;
 
         currentHealth = Mathf.Max(currentHealth - amount, 0f);
-
-        ResetCombo();
-        EnterActionState(CharacterState.Hurt, hurtDuration);
         Damaged?.Invoke();
-
     }
 
     public void Heal(float amount)
