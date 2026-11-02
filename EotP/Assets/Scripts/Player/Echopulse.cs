@@ -30,6 +30,12 @@ public class EchoPulse : MonoBehaviour
     public float Radius { get; private set; }
     public Vector2 Origin => transform.position;
     public bool IsExpanding => Radius < maxRadius;
+    public float MaxRadius => maxRadius;
+
+    public static readonly System.Collections.Generic.List<EchoPulse> Active = new();
+
+    private void OnEnable() { Active.Add(this); }
+    private void OnDisable() { Active.Remove(this); }
 
     private LineRenderer line;
     private CircleCollider2D circle;
@@ -132,12 +138,12 @@ public class EchoPulse : MonoBehaviour
         if (!collision.CompareTag("Agent"))
             return;
 
-        // The trigger passes through walls, so only alert agents the pulse can actually see.
-        // Use the agent's centre so the ground under its feet doesn't block the line.
         if (!HasLineOfSight(collision.bounds.center))
             return;
 
-        collision.GetComponent<BiterAgent>().Alert(Origin);
+        BiterAgent biter = collision.GetComponent<BiterAgent>();
+        if (biter != null)
+            biter.Alert(Origin);
     }
 
     public void UpdateColliderShape()
