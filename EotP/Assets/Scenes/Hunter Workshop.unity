@@ -1194,13 +1194,32 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 6210353598909289889, guid: 4210f55364c42424d9d79791d7fe3fec, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1394491178}
   m_SourcePrefab: {fileID: 100100000, guid: 4210f55364c42424d9d79791d7fe3fec, type: 3}
 --- !u!1 &1394491173 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6210353598909289889, guid: 4210f55364c42424d9d79791d7fe3fec, type: 3}
   m_PrefabInstance: {fileID: 1394491172}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1394491178
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1394491173}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e5e637f956db0243806f94aa7426883, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PulseEmitter
+  pulsePrefab: {fileID: 8821353449132841125, guid: 32a2d3f314526334799328a73f99350c, type: 3}
+  cooldownDuration: 5
+  lingerOverride: 1.5
+  testKey: 112
 --- !u!1 &1775190120
 GameObject:
   m_ObjectHideFlags: 0
@@ -1847,7 +1866,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Unity.ML-Agents::Unity.MLAgents.Policies.BehaviorParameters
   m_BrainParameters:
-    VectorObservationSize: 10
+    VectorObservationSize: 11
     NumStackedVectorObservations: 1
     m_ActionSpec:
       m_NumContinuousActions: 0
@@ -2012,13 +2031,26 @@ MonoBehaviour:
   MaxStep: 3000
   CurrentEpisode: 0
   CumulativeReward: 0
-  _moveSpeed: 1.5
+  _moveSpeed: 5
+  DebugLogs: 0
   Player: {fileID: 1394491173}
+  Environment: {fileID: 0}
   EngagementRadius: 6
+  ScanReward: 0.2
+  ScanGrace: 0.5
+  UnrevealedGrace: 11
+  UnrevealedPenaltyWeight: 1
   ArenaHalfSize: {x: 15, y: 7.5}
   MaxPlayerSpeed: 15
   MaxPulseRadius: 20
   RevealMemory: 5
+  MaxCooldownDuration: 10
+  GroundMask:
+    serializedVersion: 2
+    m_Bits: 128
+  SpawnClearRadius: 0.6
+  MinSpawnSeparation: 6
+  MaxSpawnAttempts: 30
 --- !u!4 &8322648436545702637
 Transform:
   m_ObjectHideFlags: 0
