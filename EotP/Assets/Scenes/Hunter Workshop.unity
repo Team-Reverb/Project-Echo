@@ -1139,87 +1139,6 @@ MonoBehaviour:
     - rid: 6848631496231354458
       type: {class: ShadowShape2DProvider_Collider2D, ns: UnityEngine.Rendering.Universal, asm: Unity.RenderPipelines.Universal.2D.Runtime}
       data: 
---- !u!1001 &1394491172
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 2638082511113919512, guid: 4210f55364c42424d9d79791d7fe3fec, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2638082511113919512, guid: 4210f55364c42424d9d79791d7fe3fec, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -5.44
-      objectReference: {fileID: 0}
-    - target: {fileID: 2638082511113919512, guid: 4210f55364c42424d9d79791d7fe3fec, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2638082511113919512, guid: 4210f55364c42424d9d79791d7fe3fec, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2638082511113919512, guid: 4210f55364c42424d9d79791d7fe3fec, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2638082511113919512, guid: 4210f55364c42424d9d79791d7fe3fec, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2638082511113919512, guid: 4210f55364c42424d9d79791d7fe3fec, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2638082511113919512, guid: 4210f55364c42424d9d79791d7fe3fec, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2638082511113919512, guid: 4210f55364c42424d9d79791d7fe3fec, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2638082511113919512, guid: 4210f55364c42424d9d79791d7fe3fec, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6210353598909289889, guid: 4210f55364c42424d9d79791d7fe3fec, type: 3}
-      propertyPath: m_Name
-      value: Player Prototype 2
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 6210353598909289889, guid: 4210f55364c42424d9d79791d7fe3fec, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1394491178}
-  m_SourcePrefab: {fileID: 100100000, guid: 4210f55364c42424d9d79791d7fe3fec, type: 3}
---- !u!1 &1394491173 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6210353598909289889, guid: 4210f55364c42424d9d79791d7fe3fec, type: 3}
-  m_PrefabInstance: {fileID: 1394491172}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1394491178
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1394491173}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1e5e637f956db0243806f94aa7426883, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PulseEmitter
-  pulsePrefab: {fileID: 8821353449132841125, guid: 32a2d3f314526334799328a73f99350c, type: 3}
-  cooldownDuration: 5
-  lingerOverride: 1.5
-  testKey: 112
 --- !u!1 &1775190120
 GameObject:
   m_ObjectHideFlags: 0
@@ -1312,6 +1231,63 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
   m_BlendShapeWeights: []
+--- !u!1001 &1777827690
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 933491156820811027, guid: 663665207d4f0ec4895086475677c485, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 933491156820811027, guid: 663665207d4f0ec4895086475677c485, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -4
+      objectReference: {fileID: 0}
+    - target: {fileID: 933491156820811027, guid: 663665207d4f0ec4895086475677c485, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 933491156820811027, guid: 663665207d4f0ec4895086475677c485, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 933491156820811027, guid: 663665207d4f0ec4895086475677c485, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 933491156820811027, guid: 663665207d4f0ec4895086475677c485, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 933491156820811027, guid: 663665207d4f0ec4895086475677c485, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 933491156820811027, guid: 663665207d4f0ec4895086475677c485, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 933491156820811027, guid: 663665207d4f0ec4895086475677c485, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 933491156820811027, guid: 663665207d4f0ec4895086475677c485, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5641765036292101000, guid: 663665207d4f0ec4895086475677c485, type: 3}
+      propertyPath: m_Name
+      value: Player Bot 1.0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 663665207d4f0ec4895086475677c485, type: 3}
 --- !u!1 &1980761921
 GameObject:
   m_ObjectHideFlags: 0
@@ -1576,6 +1552,11 @@ MonoBehaviour:
     - rid: 6848631496231354468
       type: {class: ShadowShape2DProvider_Collider2D, ns: UnityEngine.Rendering.Universal, asm: Unity.RenderPipelines.Universal.2D.Runtime}
       data: 
+--- !u!1 &2032953975 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5641765036292101000, guid: 663665207d4f0ec4895086475677c485, type: 3}
+  m_PrefabInstance: {fileID: 1777827690}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &599704503726467552
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2033,7 +2014,7 @@ MonoBehaviour:
   CumulativeReward: 0
   _moveSpeed: 5
   DebugLogs: 0
-  Player: {fileID: 1394491173}
+  Player: {fileID: 2032953975}
   Environment: {fileID: 0}
   EngagementRadius: 6
   ScanReward: 0.2
@@ -2072,4 +2053,4 @@ SceneRoots:
   m_Roots:
   - {fileID: 475365400}
   - {fileID: 890660268}
-  - {fileID: 1394491172}
+  - {fileID: 1777827690}

@@ -99,4 +99,9 @@ public class HunterEnvironmentBehaviour : MonoBehaviour
         foreach (Transform child in obj.transform)
             SetLayerRecursively(child.gameObject, layer);
     }
+
+    public GameObject GetRandomPlatform()
+    {
+        return _platforms[Random.Range(0,_platforms.Count)];
+    }
 }

@@ -82,6 +82,14 @@ public class HunterAgent : Agent
         CumulativeReward = 0f;
     }
 
+    public void ResetPlayerInEnvironment()
+    {
+        if (_bot != null && _playerBody != null)
+        {
+            _playerBody.transform.position = Environment.GetRandomPlatform().transform.position + new Vector3(0, _playerBody.transform.localScale.y,0);
+        }
+    }
+
     // reset
     public override void OnEpisodeBegin()
     {
@@ -112,6 +120,8 @@ public class HunterAgent : Agent
         _wasPulseActive = false;
         _exposedThisPulse = false;
         _scanPayoutTime = -1f;
+
+        ResetPlayerInEnvironment();
     }
 
     // Local position (relative to the Hunter's parent = arena centre) with no Ground nearby.
@@ -275,6 +285,9 @@ public class HunterAgent : Agent
     {
         if (_tagImmunitySteps > 0) return;   // stale hit from last episode, or a double hit
         AddReward(-1f);
-        EndEpisode();                        // runs OnEpisodeBegin immediately
+
+        ResetPlayerInEnvironment();
+
+        //EndEpisode();                        // runs OnEpisodeBegin immediately
     }
 }
