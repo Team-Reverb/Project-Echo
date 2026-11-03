@@ -1,5 +1,5 @@
 behaviors:
-  YourAgentBehaviorName: # Must perfectly match the 'Behavior Name' in Unity Editor
+  HunterAgent:
     trainer_type: ppo
     hyperparameters:
       batch_size: 1024

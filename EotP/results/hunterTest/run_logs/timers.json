@@ -1,0 +1,42 @@
+{
+    "name": "root",
+    "metadata": {
+        "timer_format_version": "0.1.0",
+        "start_time_seconds": "1793692346",
+        "python_version": "3.10.15 | packaged by conda-forge | (main, Oct 16 2024, 01:15:49) [MSC v.1941 64 bit (AMD64)]",
+        "command_line_arguments": "C:\\Users\\ianrl\\miniconda3\\envs\\mlagents\\Scripts\\mlagents-learn config/HunterAgent.yaml --run-id=hunterTest",
+        "mlagents_version": "1.1.0",
+        "mlagents_envs_version": "1.1.0",
+        "communication_protocol_version": "1.5.0",
+        "pytorch_version": "2.2.2+cu121",
+        "numpy_version": "1.23.5",
+        "end_time_seconds": "1793692357"
+    },
+    "total": 11.400145100080408,
+    "count": 1,
+    "self": 0.007834300165995955,
+    "children": {
+        "run_training.setup": {
+            "total": 0.1121360999532044,
+            "count": 1,
+            "self": 0.1121360999532044
+        },
+        "TrainerController.start_learning": {
+            "total": 11.280174699961208,
+            "count": 1,
+            "self": 0.00011339993216097355,
+            "children": {
+                "TrainerController._reset_env": {
+                    "total": 11.280045600025915,
+                    "count": 1,
+                    "self": 11.280045600025915
+                },
+                "TrainerController._save_models": {
+                    "total": 1.5700003132224083e-05,
+                    "count": 1,
+                    "self": 1.5700003132224083e-05
+                }
+            }
+        }
+    }
+}

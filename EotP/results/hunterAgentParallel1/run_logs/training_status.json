@@ -1,0 +1,65 @@
+{
+    "HunterAgent": {
+        "checkpoints": [
+            {
+                "steps": 3499960,
+                "file_path": "results\\hunterAgentParallel1\\HunterAgent\\HunterAgent-3499960.onnx",
+                "reward": null,
+                "creation_time": 1793695705.7927268,
+                "auxillary_file_paths": [
+                    "results\\hunterAgentParallel1\\HunterAgent\\HunterAgent-3499960.pt"
+                ]
+            },
+            {
+                "steps": 3999968,
+                "file_path": "results\\hunterAgentParallel1\\HunterAgent\\HunterAgent-3999968.onnx",
+                "reward": -0.4899185044018345,
+                "creation_time": 1793696111.4438548,
+                "auxillary_file_paths": [
+                    "results\\hunterAgentParallel1\\HunterAgent\\HunterAgent-3999968.pt"
+                ]
+            },
+            {
+                "steps": 4499984,
+                "file_path": "results\\hunterAgentParallel1\\HunterAgent\\HunterAgent-4499984.onnx",
+                "reward": null,
+                "creation_time": 1793696516.8123603,
+                "auxillary_file_paths": [
+                    "results\\hunterAgentParallel1\\HunterAgent\\HunterAgent-4499984.pt"
+                ]
+            },
+            {
+                "steps": 4999992,
+                "file_path": "results\\hunterAgentParallel1\\HunterAgent\\HunterAgent-4999992.onnx",
+                "reward": -0.8231036655628553,
+                "creation_time": 1793696921.9671373,
+                "auxillary_file_paths": [
+                    "results\\hunterAgentParallel1\\HunterAgent\\HunterAgent-4999992.pt"
+                ]
+            },
+            {
+                "steps": 5000184,
+                "file_path": "results\\hunterAgentParallel1\\HunterAgent\\HunterAgent-5000184.onnx",
+                "reward": -0.8231036655628553,
+                "creation_time": 1793696922.0122588,
+                "auxillary_file_paths": [
+                    "results\\hunterAgentParallel1\\HunterAgent\\HunterAgent-5000184.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 5000184,
+            "file_path": "results\\hunterAgentParallel1\\HunterAgent.onnx",
+            "reward": -0.8231036655628553,
+            "creation_time": 1793696922.0122588,
+            "auxillary_file_paths": [
+                "results\\hunterAgentParallel1\\HunterAgent\\HunterAgent-5000184.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "1.1.0",
+        "torch_version": "2.2.2+cu121"
+    }
+}

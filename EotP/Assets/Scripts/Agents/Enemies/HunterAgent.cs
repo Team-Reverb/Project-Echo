@@ -255,6 +255,7 @@ public class HunterAgent : Agent
             AddReward(ScanReward);   // a tag ends the episode first, so tagged scans never pay
             _scanPayoutTime = -1f;
             _exposedThisPulse = false;
+            ResetPlayerInEnvironment();
             if (DebugLogs) Debug.Log($"Scan reward +{ScanReward}");
         }
 
