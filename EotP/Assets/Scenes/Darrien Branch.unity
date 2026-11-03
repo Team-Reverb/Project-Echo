@@ -337,7 +337,7 @@ GameObject:
   - component: {fileID: 506409179}
   - component: {fileID: 506409178}
   - component: {fileID: 506409177}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Layer1
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -541,7 +541,7 @@ GameObject:
   - component: {fileID: 799647097}
   - component: {fileID: 799647096}
   - component: {fileID: 799647095}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Layer1
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -793,7 +793,7 @@ GameObject:
   - component: {fileID: 1214745897}
   - component: {fileID: 1214745896}
   - component: {fileID: 1214745895}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: LevelPalette (1)
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -878,7 +878,7 @@ GameObject:
   - component: {fileID: 1298408433}
   - component: {fileID: 1298408432}
   - component: {fileID: 1298408431}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Layer1
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -1233,7 +1233,7 @@ GameObject:
   - component: {fileID: 1636598105}
   - component: {fileID: 1636598104}
   - component: {fileID: 1636598103}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: LevelPalette (3)
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -1317,7 +1317,7 @@ GameObject:
   - component: {fileID: 1830443678}
   - component: {fileID: 1830443677}
   - component: {fileID: 1830443676}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: LevelPalette (2)
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -1721,7 +1721,7 @@ GameObject:
   - component: {fileID: 7422711042771183754}
   - component: {fileID: 4334930393366936030}
   - component: {fileID: 7422711042771183755}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Layer1
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -1853,7 +1853,7 @@ GameObject:
   - component: {fileID: 3469245766021454354}
   - component: {fileID: 8954757664474068443}
   - component: {fileID: 8954757664474068445}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: LevelPalette
   m_TagString: Ground
   m_Icon: {fileID: 0}
