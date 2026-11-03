@@ -83,7 +83,10 @@ public class HunterEnvironmentBehaviour : MonoBehaviour
         foreach (GameObject p in _platforms)
         {
             if (p != null)
+            {
+                p.SetActive(false);
                 Destroy(p);
+            }
         }
         _platforms.Clear();
     }

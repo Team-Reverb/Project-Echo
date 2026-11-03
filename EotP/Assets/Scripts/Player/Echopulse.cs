@@ -33,6 +33,7 @@ public class EchoPulse : MonoBehaviour
     public float MaxRadius => maxRadius;
 
     public static readonly System.Collections.Generic.List<EchoPulse> Active = new();
+    public float LingerDuration { get => lingerDuration; set => lingerDuration = Mathf.Max(0.01f, value); }
 
     private void OnEnable() { Active.Add(this); }
     private void OnDisable() { Active.Remove(this); }
