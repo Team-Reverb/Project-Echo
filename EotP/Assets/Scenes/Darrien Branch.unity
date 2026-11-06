@@ -577,6 +577,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3787613870326359839, guid: 4210f55364c42424d9d79791d7fe3fec, type: 3}
+      propertyPath: swordHeight
+      value: 0.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 3787613870326359839, guid: 4210f55364c42424d9d79791d7fe3fec, type: 3}
+      propertyPath: swordHeightOffset
+      value: 0.1
+      objectReference: {fileID: 0}
     - target: {fileID: 6210353598909289889, guid: 4210f55364c42424d9d79791d7fe3fec, type: 3}
       propertyPath: m_Name
       value: Player Prototype 2

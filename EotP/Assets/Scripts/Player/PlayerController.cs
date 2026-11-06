@@ -13,10 +13,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float moveSpeed = 6f;
 
     [Header("Jump Variables")]
-    [SerializeField] private float jumpSpeed = 15f;
-    [SerializeField] private float minJumpTime = 0.05f;
-    [SerializeField] private float maxJumpTime = 0.5f;
-    [SerializeField] private float jumpCutMultiplier = 0.2f;
+    [SerializeField] private float jumpSpeed = 10f;
+    [SerializeField] private float minJumpTime = 0.1f;
+    [SerializeField] private float maxJumpTime = 0.4f;
+    [SerializeField] private float jumpCutMultiplier = 0.1f;
     [SerializeField] private float coyoteTime = 0.1f;
 
     [Header("State")]
@@ -31,8 +31,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float pulseCooldownCombat = 5f;
 
     [Header("Standard Sword")]
-    [SerializeField] private float swordReach = 1.2f;
-    [SerializeField] private float swordHeight = 1.2f;
+    [SerializeField] private float swordReach = 1f;
+    [SerializeField] private float swordHeight = 0.4f;
+    [SerializeField] private float swordHeightOffset = 0.1f;
     [SerializeField] private float swordDamage = 10f;
     [SerializeField] private float comboCooldown = 0.5f;
     [SerializeField] private LayerMask enemyLayers;
@@ -259,6 +260,7 @@ public class PlayerController : MonoBehaviour
             GameObject target = hit.attachedRigidbody != null ? hit.attachedRigidbody.gameObject : hit.gameObject;
             if (!struck.Add(target)) continue;
 
+
             Debug.Log("Sword hit " + target.name);
             // public void TakeDamage(float amount) method in enemy will receive a hit
             target.SendMessage("TakeDamage", swordDamage, SendMessageOptions.DontRequireReceiver);
@@ -278,9 +280,10 @@ public class PlayerController : MonoBehaviour
         float facing = Mathf.Sign(transform.localScale.x);
         float frontEdge = facing > 0f ? bounds.max.x : bounds.min.x;
 
-        center = new Vector2(frontEdge + facing * swordReach / 2f, bounds.center.y);
+        center = new Vector2(frontEdge + facing * swordReach / 2f, bounds.center.y + swordHeightOffset);
         size = new Vector2(swordReach, swordHeight);
     }
+
 
     // Select the player in the Scene view to see sword hitbox
     void OnDrawGizmosSelected()
