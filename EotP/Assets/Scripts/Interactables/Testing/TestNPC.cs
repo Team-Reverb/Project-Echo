@@ -1,16 +1,14 @@
 using UnityEngine;
 
-public class TestNPC : MonoBehaviour
+public class TestNPC : InteractableBase
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+    [SerializeField] private string npcName = "Test NPC";
+    [SerializeField] private string text = "Hello!";
 
-    // Update is called once per frame
-    void Update()
+    public override string Prompt => "talk to " + npcName;
+
+    public override void Interact(PlayerController player)
     {
-        
+        Debug.Log(npcName + ": " + text);
     }
 }

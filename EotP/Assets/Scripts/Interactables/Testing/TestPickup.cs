@@ -1,16 +1,15 @@
 using UnityEngine;
 
-public class TestPickup : MonoBehaviour
+public class TestPickup : InteractableBase
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    [SerializeField] private string itemName = "Test Item";
+
+    public override string Prompt => "pick up " + itemName;
+
+    public override void Interact(PlayerController player)
     {
-        
+        Debug.Log("Picked up " + itemName);
+        Destroy(gameObject);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }
