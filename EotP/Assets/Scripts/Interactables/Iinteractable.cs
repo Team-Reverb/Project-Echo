@@ -1,6 +1,7 @@
 using UnityEngine;
 
-public interface Iinteractable
+// Anything the player can interact with (doors, pickups, NPCs, ... etc)
+public interface IInteractable
 {
     string Prompt { get; } // action text in UI prompt
 
