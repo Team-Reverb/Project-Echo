@@ -131,17 +131,21 @@ PrefabInstance:
       propertyPath: target
       value: 
       objectReference: {fileID: 860904523}
+    - target: {fileID: 3219501724924826015, guid: 6fc0d9dd385ba7042bfb4d9d3319b8ed, type: 3}
+      propertyPath: smoothTime
+      value: 0.2
+      objectReference: {fileID: 0}
     - target: {fileID: 3653139071932776204, guid: 6fc0d9dd385ba7042bfb4d9d3319b8ed, type: 3}
       propertyPath: m_Name
       value: Player Follow Camera
       objectReference: {fileID: 0}
     - target: {fileID: 4201033816065334060, guid: 6fc0d9dd385ba7042bfb4d9d3319b8ed, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 70.57667
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4201033816065334060, guid: 6fc0d9dd385ba7042bfb4d9d3319b8ed, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 15.42424
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4201033816065334060, guid: 6fc0d9dd385ba7042bfb4d9d3319b8ed, type: 3}
       propertyPath: m_LocalPosition.z

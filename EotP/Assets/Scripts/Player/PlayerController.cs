@@ -21,6 +21,8 @@ public class PlayerController : MonoBehaviour
 
     [Header("State")]
     [SerializeField] private bool isGrounded;
+    [SerializeField] private float groundCheckDistance = 0.1f;
+    [SerializeField] private float groundedGraceTime = 0.08f;
 
     [Header("Health")]
     [SerializeField] private float maxHealth = 100f;
@@ -53,6 +55,7 @@ public class PlayerController : MonoBehaviour
     private float pulseCooldownTimer;
     private float pulseCooldownDuration;
     private float attackLockedUntil;
+    private float lastGroundContactTime = -1f;
 
     private Rigidbody2D rb;
     private Collider2D col;
@@ -98,6 +101,8 @@ public class PlayerController : MonoBehaviour
         controls.Player.Pulse.performed -= OnPulse;
         controls.Player.Interact.performed -= OnInteract;
         controls.Player.Disable();
+
+        isGrounded = false;
     }
 
     void Update()
@@ -109,6 +114,7 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
+        UpdateGroundCheck();
         HandleJump();
         HandleMovement();
     }
@@ -127,6 +133,7 @@ public class PlayerController : MonoBehaviour
         isJumping = true;
         jumpTimer = 0f;
         lastGroundedTime = -1f;
+        lastGroundContactTime = -1f;
 
         Vector2 velocity = rb.linearVelocity;
         velocity.y = jumpSpeed;
@@ -284,15 +291,6 @@ public class PlayerController : MonoBehaviour
         size = new Vector2(swordReach, swordHeight);
     }
 
-
-    // Select the player in the Scene view to see sword hitbox
-    void OnDrawGizmosSelected()
-    {
-        GetSwordArea(out Vector2 center, out Vector2 size);
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireCube(center, size);
-    }
-
     // Health and Combat
 
     public void TakeDamage(float amount)
@@ -315,39 +313,47 @@ public class PlayerController : MonoBehaviour
 
     // Ground Detection
 
-    void OnCollisionEnter2D(Collision2D collision)
+    void UpdateGroundCheck()
     {
-        CheckForGround(collision);
-    }
+        GetGroundCheckArea(out Vector2 center, out Vector2 size);
 
-    void OnCollisionStay2D(Collision2D collision)
-    {
-        CheckForGround(collision);
-    }
-
-    void OnCollisionExit2D(Collision2D collision)
-    {
-        if (collision.gameObject.CompareTag("Ground"))
+        bool touching = false;
+        Collider2D[] hits = Physics2D.OverlapBoxAll(center, size, 0f);
+        foreach (Collider2D hit in hits)
         {
-            isGrounded = false;
-        }
-    }
-
-    void CheckForGround(Collision2D collision)
-    {
-        if (!collision.gameObject.CompareTag("Ground")) return;
-
-        for (int i = 0; i < collision.contactCount; i++)
-        {
-            if (collision.GetContact(i).normal.y > 0.5f)
+            if (hit.CompareTag("Ground"))
             {
-                isGrounded = true;
-                return;
+                touching = true;
+                break;
             }
         }
+
+        if (touching && !isJumping) lastGroundContactTime = Time.time;
+
+        isGrounded = Time.time - lastGroundContactTime <= groundedGraceTime;
+    }
+
+    void GetGroundCheckArea(out Vector2 center, out Vector2 size)
+    {
+        Collider2D body = col != null ? col : GetComponent<Collider2D>();
+        Bounds bounds = body.bounds;
+
+        center = new Vector2(bounds.center.x, bounds.min.y - groundCheckDistance / 2f);
+        size = new Vector2(bounds.size.x * 0.9f, groundCheckDistance);
     }
 
     // Debugging
+
+    void OnDrawGizmosSelected()
+    {
+        GetSwordArea(out Vector2 center, out Vector2 size);
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireCube(center, size);
+
+        GetGroundCheckArea(out Vector2 groundCenter, out Vector2 groundSize);
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireCube(groundCenter, groundSize);
+    }
 
     void FeaturePlaceholderLog(string feature)
     {

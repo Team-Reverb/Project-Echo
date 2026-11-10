@@ -152,4 +152,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CameraFollow
   target: {fileID: 0}
   heightOffset: 1
-  smoothTime: 0.15
+  smoothTime: 0.2
