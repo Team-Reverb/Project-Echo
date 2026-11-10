@@ -18,7 +18,13 @@ public class HunterAgent : Agent
     void TestTag() => OnTagged();
 
     [Header("Movement")]
-    public float _moveSpeed = 5f;            // units per second
+    public float _moveSpeed = 350f;            // units per second
+
+    [Header("Combat Settings")]
+
+    public float _attackCooldown = 4f;        // in seconds
+    public float _attackDamage = 10f;        // placeholder
+    
 
     [Header("Debug (turn off for training)")]
     public bool DebugLogs = true;
@@ -29,6 +35,7 @@ public class HunterAgent : Agent
 
     [Header("Rewards")]
     public float EngagementRadius = 6f;      // outside this, small per-step penalty
+    public float PlayerHitReward = 0.5f;     // reward for making contact with a player when attack is off cooldown
     public float ScanReward = 0.2f;          // exposed during a pulse and not tagged
     public float ScanGrace = 0.5f;           // seconds after the pulse ends before paying out (>= projectile flight time)
     public float UnrevealedGrace = 11f;      // seconds unrevealed before the hiding penalty starts (~2 pulse cycles)
@@ -51,6 +58,7 @@ public class HunterAgent : Agent
     private bool _revealed;
     private float _lastRevealedTime;
     private float _unrevealedSince;
+    private bool _wasTagged;
 
     // Scan state
     private bool _wasPulseActive;
@@ -58,6 +66,13 @@ public class HunterAgent : Agent
     private float _scanPayoutTime = -1f;     // -1 = nothing pending
 
     private int _tagImmunitySteps;
+
+
+    // Combat Related
+
+    private float _lastAttackTime;
+    private bool _hitPlayer = false; // indicates whether the agent successfully hit the player during its last reveal
+    private bool _attackReady = true; // indicates whether or not the agent can currently attack
 
     // MaxStep is 0 in heuristic/inference runs; -2f / 0 would be -Infinity
     private float StepScale => MaxStep > 0 ? 1f / MaxStep : 0f;
@@ -184,10 +199,13 @@ public class HunterAgent : Agent
         // 9: time since last revealed, 0 = just now, 1 = RevealMemory seconds or more / never
         sensor.AddObservation(Mathf.Clamp01((Time.time - _lastRevealedTime) / RevealMemory));
 
-        // 10: pulse reach
+        // 10: whether or not attack is ready. Boolean is automatically converted
+        sensor.AddObservation(_attackReady);
+
+        // 11: pulse reach
         sensor.AddObservation(Mathf.Clamp01(_pulseSource.MaxRadius / MaxPulseRadius));
 
-        // 11: cooldown length, so the policy knows how long the safe window is
+        // 12: cooldown length, so the policy knows how long the safe window is
         sensor.AddObservation(Mathf.Clamp01(_pulseSource.CooldownDuration / MaxCooldownDuration));
     }
 
@@ -220,9 +238,13 @@ public class HunterAgent : Agent
     {
         float x = act[0] == 1 ? -1f : act[0] == 2 ? 1f : 0f;
         float y = act[1] == 1 ? -1f : act[1] == 2 ? 1f : 0f;
+        float dt = _moveSpeed * Time.deltaTime;
 
         Vector2 dir = new Vector2(x, y).normalized;   // diagonals not faster
-        _rigidBody.linearVelocity = dir * _moveSpeed;
+
+        _rigidBody.AddForce(dir * dt, ForceMode2D.Force);
+
+       // _rigidBody.linearVelocity = dir * _moveSpeed;        // commenting this out for now, testing out with AddForce, also note possible missing deltatime
     }
 
     // scan + hiding
@@ -252,9 +274,17 @@ public class HunterAgent : Agent
 
         if (_scanPayoutTime >= 0f && Time.time >= _scanPayoutTime)
         {
-            AddReward(ScanReward);   // a tag ends the episode first, so tagged scans never pay
+
+            if (!_wasTagged)
+            {
+                AddReward(ScanReward);
+                if (_hitPlayer) AddReward(ScanReward); // agent will not receive reward for hitting player if they were tagged
+            }
+
             _scanPayoutTime = -1f;
             _exposedThisPulse = false;
+            _wasTagged = false;
+            _hitPlayer = false;
             ResetPlayerInEnvironment();
             if (DebugLogs) Debug.Log($"Scan reward +{ScanReward}");
         }
@@ -280,12 +310,27 @@ public class HunterAgent : Agent
         }
     }
 
+    private void OnCollisionEnter2D(Collision2D collision) // on collision with player, if attack is off cooldown, set _hitPlayer to true
+    {
+        if (Time.time - _lastAttackTime > _attackCooldown) _attackReady = true;
+
+        if (collision.gameObject.CompareTag("Player") && _attackReady)
+        {
+            _lastAttackTime = Time.time;
+            _attackReady = false;
+            _hitPlayer = true;
+        }
+    }
+
+
     // tagged
     // Called by the bot's projectile on hit.
     public void OnTagged()
     {
         if (_tagImmunitySteps > 0) return;   // stale hit from last episode, or a double hit
         AddReward(-1f);
+
+        _wasTagged = true;
 
         ResetPlayerInEnvironment();
 
