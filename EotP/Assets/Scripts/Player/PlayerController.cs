@@ -59,6 +59,7 @@ public class PlayerController : MonoBehaviour
 
     private Rigidbody2D rb;
     private Collider2D col;
+    private InteractionDetector interactionDetector;
     private PlayerControls controls;
 
     // Read-only Values for Other Systems
@@ -78,9 +79,9 @@ public class PlayerController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         col = GetComponent<Collider2D>();
+        interactionDetector = GetComponentInChildren<InteractionDetector>();
         controls = new PlayerControls();
         currentHealth = maxHealth;
-
     }
 
     void OnEnable()
@@ -160,7 +161,13 @@ public class PlayerController : MonoBehaviour
 
     void OnInteract(InputAction.CallbackContext context)
     {
-        FeaturePlaceholderLog("Interact");
+        if (interactionDetector == null)
+        {
+            Debug.LogWarning("PlayerController: No InteractionDetector found.");
+            return;
+        }
+
+        interactionDetector.TryInteract();
     }
 
     // Movement Handling
@@ -212,7 +219,6 @@ public class PlayerController : MonoBehaviour
         rising.y = jumpSpeed;
         rb.linearVelocity = rising;
     }
-
 
     void HandleCoyoteTimer()
     {
@@ -355,10 +361,12 @@ public class PlayerController : MonoBehaviour
         Gizmos.DrawWireCube(groundCenter, groundSize);
     }
 
-    void FeaturePlaceholderLog(string feature)
-    {
-        Debug.Log(feature + " input detected");
-    }
+    // Unused at the moment
+    //
+    // void FeaturePlaceholderLog(string feature)
+    // {
+    //     Debug.Log(feature + " input detected");
+    // }
 
     [ContextMenu("Debug: Take 10 Damage")]
     void DebugTakeDamage() => TakeDamage(10);
