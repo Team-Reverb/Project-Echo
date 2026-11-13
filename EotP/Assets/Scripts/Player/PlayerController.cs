@@ -317,6 +317,22 @@ public class PlayerController : MonoBehaviour
         isInCombat = value;
     }
 
+    // Input Locking
+
+    public void SetInputEnabled(bool value)
+    {
+        if (value)
+        {
+            controls.Player.Enable();
+        }
+        else
+        {
+            controls.Player.Disable();
+            moveInput = 0f;
+            isJumping = false;
+        }
+    }
+
     // Ground Detection
 
     void UpdateGroundCheck()

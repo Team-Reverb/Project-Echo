@@ -9,9 +9,9 @@ public class InteractionDetector : MonoBehaviour
     [SerializeField] private bool logTargetChanges;
 
     public event Action<IInteractable> TargetChanged;
-
     public IInteractable Current { get; private set; }
 
+    private bool isLocked;
     private readonly List<IInteractable> inRange = new List<IInteractable>();
     private PlayerController player;
 
@@ -35,7 +35,7 @@ public class InteractionDetector : MonoBehaviour
     void Update()
     {
         inRange.RemoveAll(i => !IsValid(i));
-        SetCurrent(FindClosest());
+        SetCurrent(isLocked ? null : FindClosest());
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -109,5 +109,14 @@ public class InteractionDetector : MonoBehaviour
             return component != null && component.gameObject.activeInHierarchy;
         }
         return true;
+    }
+
+    public void SetLocked(bool locked)
+    {
+        isLocked = locked;
+        if (locked)
+        {
+            SetCurrent(null);
+        }
     }
 }

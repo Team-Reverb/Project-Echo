@@ -7,7 +7,7 @@ public abstract class InteractableBase : MonoBehaviour, IInteractable
     [Header("Interactable")]
     [SerializeField] private Transform interactionPoint; // Optional. Defaults to object's position.
     [SerializeField] private GameObject highlightObject; // Optional. Outline object that is switched on while targeted.
-    [SerializeField] private SpriteRenderer spriteRenderer; // Optional. Tinted if no highlight object is set.
+    [SerializeField] protected SpriteRenderer spriteRenderer; // Optional. Tinted if no highlight object is set.
     [SerializeField] private Color highlightTint = new Color(1f, 0.95f, 0.6f);
 
     private Color originalColor = Color.white;
