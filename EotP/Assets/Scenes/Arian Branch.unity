@@ -131,10 +131,6 @@ PrefabInstance:
       propertyPath: target
       value: 
       objectReference: {fileID: 860904523}
-    - target: {fileID: 3219501724924826015, guid: 6fc0d9dd385ba7042bfb4d9d3319b8ed, type: 3}
-      propertyPath: smoothTime
-      value: 0.2
-      objectReference: {fileID: 0}
     - target: {fileID: 3653139071932776204, guid: 6fc0d9dd385ba7042bfb4d9d3319b8ed, type: 3}
       propertyPath: m_Name
       value: Player Follow Camera
@@ -177,22 +173,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4201033816065334060, guid: 6fc0d9dd385ba7042bfb4d9d3319b8ed, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4691368674081382020, guid: 6fc0d9dd385ba7042bfb4d9d3319b8ed, type: 3}
-      propertyPath: m_ClearFlags
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 4691368674081382020, guid: 6fc0d9dd385ba7042bfb4d9d3319b8ed, type: 3}
-      propertyPath: m_BackGroundColor.b
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4691368674081382020, guid: 6fc0d9dd385ba7042bfb4d9d3319b8ed, type: 3}
-      propertyPath: m_BackGroundColor.g
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4691368674081382020, guid: 6fc0d9dd385ba7042bfb4d9d3319b8ed, type: 3}
-      propertyPath: m_BackGroundColor.r
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

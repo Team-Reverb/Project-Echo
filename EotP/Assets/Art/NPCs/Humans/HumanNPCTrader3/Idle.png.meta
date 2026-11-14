@@ -1,19 +1,25 @@
 fileFormatVersion: 2
-guid: 7d8c5e7a7ed9d3845b6c4a9d0e3ad511
+guid: 78decf1bf12aa244aa4e892d9bfbc378
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -1715769006058099343
-    second: npc-oldman1_0
+      213: 4723107735738678597
+    second: Idle_0
   - first:
-      213: -4664121192360355832
-    second: npc-oldman1_1
+      213: -7385789195546760866
+    second: Idle_1
   - first:
-      213: -6142635506771376044
-    second: npc-oldman1_2
+      213: 3234629978573100161
+    second: Idle_2
   - first:
-      213: 8930218244277608441
-    second: npc-oldman1_3
+      213: 6373048116405451881
+    second: Idle_3
+  - first:
+      213: 7264182050183361747
+    second: Idle_4
+  - first:
+      213: -2834552850196481573
+    second: Idle_5
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -111,13 +117,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: npc-oldman1_0
+      name: Idle_0
       rect:
         serializedVersion: 2
-        x: 0
+        x: 39
         y: 0
-        width: 20
-        height: 37
+        width: 35
+        height: 67
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -126,20 +132,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 17d2845fd2d5038e0800000000000000
-      internalID: -1715769006058099343
+      spriteID: 54d7a982679db8140800000000000000
+      internalID: 4723107735738678597
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: npc-oldman1_1
+      name: Idle_1
       rect:
         serializedVersion: 2
-        x: 22
+        x: 167
         y: 0
-        width: 18
-        height: 37
+        width: 35
+        height: 67
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -148,20 +154,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 8085df3bc76b54fb0800000000000000
-      internalID: -4664121192360355832
+      spriteID: e596485bbd7608990800000000000000
+      internalID: -7385789195546760866
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: npc-oldman1_2
+      name: Idle_2
       rect:
         serializedVersion: 2
-        x: 41
+        x: 295
         y: 0
-        width: 17
-        height: 37
+        width: 35
+        height: 67
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -170,20 +176,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 458c03a3d89f0caa0800000000000000
-      internalID: -6142635506771376044
+      spriteID: 184dda4e3d6b3ec20800000000000000
+      internalID: 3234629978573100161
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: npc-oldman1_3
+      name: Idle_3
       rect:
         serializedVersion: 2
-        x: 60
+        x: 423
         y: 0
-        width: 20
-        height: 37
+        width: 35
+        height: 68
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -192,8 +198,52 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 9ff11e8cd228eeb70800000000000000
-      internalID: 8930218244277608441
+      spriteID: 96cb1dafe7d917850800000000000000
+      internalID: 6373048116405451881
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Idle_4
+      rect:
+        serializedVersion: 2
+        x: 551
+        y: 0
+        width: 35
+        height: 68
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3d4b2fc561f8fc460800000000000000
+      internalID: 7264182050183361747
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Idle_5
+      rect:
+        serializedVersion: 2
+        x: 679
+        y: 0
+        width: 35
+        height: 67
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bd9b7fa6335a9a8d0800000000000000
+      internalID: -2834552850196481573
       vertices: []
       indices: 
       edges: []
@@ -212,10 +262,12 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      npc-oldman1_0: -1715769006058099343
-      npc-oldman1_1: -4664121192360355832
-      npc-oldman1_2: -6142635506771376044
-      npc-oldman1_3: 8930218244277608441
+      Idle_0: 4723107735738678597
+      Idle_1: -7385789195546760866
+      Idle_2: 3234629978573100161
+      Idle_3: 6373048116405451881
+      Idle_4: 7264182050183361747
+      Idle_5: -2834552850196481573
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
