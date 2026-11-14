@@ -16,6 +16,8 @@ public class DialogueManager : MonoBehaviour
     [SerializeField] private float inputGraceTime = 0.2f; // System ignores button presses immediately after conversation starts
     [SerializeField] private bool finishLineFirst = true; // True: first press finishes typing the line, second press skips
 
+    public event System.Action DialogueEnded;
+
     public bool IsActive { get; private set; }
 
     private string[] lines;
@@ -122,6 +124,7 @@ public class DialogueManager : MonoBehaviour
 
         player.SetInputEnabled(true);
         detector.SetLocked(false);
+        DialogueEnded?.Invoke();
         npcCamera = null;
         cameraRoutine = null;
     }
