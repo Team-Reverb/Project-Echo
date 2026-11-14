@@ -542,6 +542,7 @@ GameObject:
   - component: {fileID: 5910846831680360706}
   - component: {fileID: 8809680976000561768}
   - component: {fileID: 7615976076153518294}
+  - component: {fileID: 6194880258354215975}
   m_Layer: 5
   m_Name: ContinueIndicator
   m_TagString: Untagged
@@ -565,7 +566,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: 0, y: 20}
+  m_AnchoredPosition: {x: 0, y: 30}
   m_SizeDelta: {x: -200, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8809680976000561768
@@ -668,6 +669,20 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &6194880258354215975
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3297027568462637919}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e32128f9fd7d3764db8025c6d8d7285b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BouncingIndicator
+  height: 8
+  speed: 5
 --- !u!1 &3537379962336485935
 GameObject:
   m_ObjectHideFlags: 0

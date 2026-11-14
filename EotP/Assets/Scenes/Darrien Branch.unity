@@ -215,7 +215,7 @@ MonoBehaviour:
   interactionPoint: {fileID: 0}
   highlightObject: {fileID: 0}
   spriteRenderer: {fileID: 1908778925}
-  highlightTint: {r: 1, g: 0.95, b: 0.6, a: 1}
+  highlightTint: {r: 0.81886786, g: 0.81886786, b: 0.81886786, a: 1}
   npcName: Template NPC
   sprite: {fileID: 4723107735738678597, guid: 7a81b72cc40afa84ab159fc2843624c4, type: 3}
   lines:
