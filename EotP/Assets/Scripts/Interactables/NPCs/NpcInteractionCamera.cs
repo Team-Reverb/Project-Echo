@@ -6,7 +6,7 @@ public class NpcInteractionCamera : MonoBehaviour
 {
     [Header("Focus")]
     [SerializeField] private Transform focusPoint; // Optional. Defaults to object's parent
-    [SerializeField] private Vector2 focusOffset = new Vector2(0f, 0.75f);
+    [SerializeField] private float focusHeightOffset = 0.75f;
 
     [Header("Zoom")]
     [SerializeField] private float zoomFactor = 0.7f;
@@ -43,7 +43,7 @@ public class NpcInteractionCamera : MonoBehaviour
     Vector3 GetFocusPosition(float z)
     {
         Transform focus = focusPoint != null ? focusPoint : (transform.parent != null ? transform.parent : transform);
-        return new Vector3(focus.position.x + focusOffset.x, focus.position.y + focusOffset.y, z);
+        return new Vector3(focus.position.x, focus.position.y + focusHeightOffset, z);
     }
 
     IEnumerator BlendTo(Vector3 targetPosition, float targetSize)
