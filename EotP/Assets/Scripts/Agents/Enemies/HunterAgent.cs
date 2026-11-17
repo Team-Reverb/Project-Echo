@@ -70,7 +70,7 @@ public class HunterAgent : Agent
 
     // Combat Related
 
-    private float _lastAttackTime;
+    private float _lastAttackTime = 0;
     private bool _hitPlayer = false; // indicates whether the agent successfully hit the player during its last reveal
     private bool _attackReady = true; // indicates whether or not the agent can currently attack
 
@@ -253,6 +253,7 @@ public class HunterAgent : Agent
     {
         if (_pulseSource == null) return;
         if (_tagImmunitySteps > 0) _tagImmunitySteps--;
+        if (_attackReady == false && Time.time - _lastAttackTime > _attackCooldown) _attackReady = true;
 
         bool pulseActive = _pulseSource.IsPulseActive;
         _revealed = pulseActive && _pulseSource.CanReveal(transform.position);
@@ -312,7 +313,7 @@ public class HunterAgent : Agent
 
     private void OnCollisionEnter2D(Collision2D collision) // on collision with player, if attack is off cooldown, set _hitPlayer to true
     {
-        if (Time.time - _lastAttackTime > _attackCooldown) _attackReady = true;
+        
 
         if (collision.gameObject.CompareTag("Player") && _attackReady)
         {
