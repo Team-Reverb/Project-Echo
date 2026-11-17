@@ -1,5 +1,7 @@
-using UnityEngine;
 using System;
+using System.Collections;
+using UnityEngine;
+using UnityEngine.UIElements;
 
 public class NPCHealthComponent : MonoBehaviour
 {
@@ -35,6 +37,21 @@ public class NPCHealthComponent : MonoBehaviour
     {
         Debug.Log(amount + " damage taken by " + gameObject.name);
         if (DamageAction != null) DamageAction?.Invoke();
+        else
+        {
+            IEnumerator FlashRed()
+            {
+                SpriteRenderer _renderer = gameObject.GetComponent<SpriteRenderer>();
+                if (_renderer == null) yield break;
+                _renderer.color = Color.red;
+                yield return new WaitForSeconds(.15f);
+                _renderer.color = Color.gray;
+            }
+
+            IEnumerator co = FlashRed();
+            StartCoroutine(co);
+            
+        }
 
         if (Health <= 0) OnDeath();
 
@@ -42,6 +59,10 @@ public class NPCHealthComponent : MonoBehaviour
 
     private void OnDeath()
     {
-        DeathAction?.Invoke();
+       if (DeathAction != null) DeathAction?.Invoke();
+       else
+       {
+            Destroy(gameObject);
+       }
     }
 }
