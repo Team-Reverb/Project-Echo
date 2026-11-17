@@ -35,7 +35,7 @@ public class HunterAgent : Agent
 
     [Header("Rewards")]
     public float EngagementRadius = 6f;      // outside this, small per-step penalty
-    public float PlayerHitReward = 0.5f;     // reward for making contact with a player when attack is off cooldown
+    public float PlayerHitReward = 1.5f;     // reward for making contact with a player when attack is off cooldown
     public float ScanReward = 0.2f;          // exposed during a pulse and not tagged
     public float ScanGrace = 0.5f;           // seconds after the pulse ends before paying out (>= projectile flight time)
     public float UnrevealedGrace = 11f;      // seconds unrevealed before the hiding penalty starts (~2 pulse cycles)
@@ -279,7 +279,7 @@ public class HunterAgent : Agent
             if (!_wasTagged)
             {
                 AddReward(ScanReward);
-                if (_hitPlayer) AddReward(ScanReward); // agent will not receive reward for hitting player if they were tagged
+                if (_hitPlayer) AddReward(PlayerHitReward); // agent will not receive reward for hitting player if they were tagged
             }
 
             _scanPayoutTime = -1f;
