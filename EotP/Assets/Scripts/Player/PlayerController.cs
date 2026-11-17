@@ -7,7 +7,7 @@ public class PlayerController : MonoBehaviour
     // Inspector Variables
 
     [Header("References")]
-    public EchoPulse echoPulsePrefab;
+    // public EchoPulse echoPulsePrefab;
 
     [Header("Movement Variables")]
     [SerializeField] private float moveSpeed = 6f;
@@ -60,6 +60,7 @@ public class PlayerController : MonoBehaviour
     private Rigidbody2D rb;
     private Collider2D col;
     private InteractionDetector interactionDetector;
+    private PulseEmitter pulseEmitter;
     private PlayerControls controls;
 
     // Read-only Values for Other Systems
@@ -80,6 +81,7 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         col = GetComponent<Collider2D>();
         interactionDetector = GetComponentInChildren<InteractionDetector>();
+        pulseEmitter = GetComponent<PulseEmitter>();
         controls = new PlayerControls();
         currentHealth = maxHealth;
     }
@@ -143,6 +145,7 @@ public class PlayerController : MonoBehaviour
         rb.linearVelocity = velocity;
     }
 
+    /*
     void OnPulse(InputAction.CallbackContext context)
     {
         if (!IsPulseReady)
@@ -158,6 +161,28 @@ public class PlayerController : MonoBehaviour
         }
 
         Instantiate(echoPulsePrefab, transform.position, Quaternion.identity);
+        StartPulseCooldown();
+    }
+    */
+
+    void OnPulse(InputAction.CallbackContext context)
+    {
+        if (!IsPulseReady)
+        {
+            Debug.Log("Pulse on cooldown. " + pulseCooldownTimer + " seconds left.");
+            return;
+        }
+
+        if (pulseEmitter == null)
+        {
+            Debug.LogWarning("PlayerController: PulseEmitter is missing.");
+            return;
+        }
+
+        pulseEmitter.SetCooldownDuration(GetPulseCooldownDuration());
+
+        if (!pulseEmitter.TryPulse()) return;
+
         StartPulseCooldown();
     }
 
@@ -240,6 +265,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    /*
     void StartPulseCooldown()
     {
         if (isInCombat)
@@ -250,6 +276,18 @@ public class PlayerController : MonoBehaviour
         {
             pulseCooldownDuration = pulseCooldownDefault;
         }
+        pulseCooldownTimer = pulseCooldownDuration;
+    }
+    */
+
+    float GetPulseCooldownDuration()
+    {
+        return isInCombat ? pulseCooldownCombat : pulseCooldownDefault;
+    }
+
+    void StartPulseCooldown()
+    {
+        pulseCooldownDuration = GetPulseCooldownDuration();
         pulseCooldownTimer = pulseCooldownDuration;
     }
 
