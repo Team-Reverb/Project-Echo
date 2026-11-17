@@ -11,6 +11,7 @@ using Random = UnityEngine.Random;
 using Unity.Mathematics;
 using Unity.MLAgents.Policies;
 using System.Runtime.CompilerServices;
+using System;
 
 public  class State
 {
@@ -145,9 +146,20 @@ public class BiterAgent : Agent
         else ChangeState(0);
 
         OriginalPosition = transform.position;
-  
+
+        if (Environment == null)
+            Environment = transform.parent.gameObject;
+
 
         _rigidBody = GetComponent<Rigidbody2D>();
+
+        NPCHealthComponent healthComponent = GetComponent<NPCHealthComponent>();
+        if (healthComponent != null)
+        {
+            void death() { Destroy(gameObject);  }
+
+            healthComponent.DeathAction = (Action)death;
+        }
 
 
     }
