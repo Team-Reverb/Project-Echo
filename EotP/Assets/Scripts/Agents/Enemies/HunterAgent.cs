@@ -27,6 +27,7 @@ public class HunterAgent : Agent
     
 
     [Header("Debug (turn off for training)")]
+
     public bool DebugLogs = true;
 
     [Header("References")]
@@ -117,15 +118,16 @@ public class HunterAgent : Agent
         {
             Environment.GenerateEnvironment();
             Physics2D.SyncTransforms();   // new platform transforms -> physics, before OverlapCircle
+            if (_bot != null)
+            {
+                _bot.ResetBot();
+                Physics2D.SyncTransforms();
+            }
+
+            transform.localPosition = FindClearSpawn();
         }
 
-        if (_bot != null)
-        {
-            _bot.ResetBot();
-            Physics2D.SyncTransforms();
-        }
-
-        transform.localPosition = FindClearSpawn();
+        
         _rigidBody.position = transform.position;
         _rigidBody.linearVelocity = Vector2.zero;
 

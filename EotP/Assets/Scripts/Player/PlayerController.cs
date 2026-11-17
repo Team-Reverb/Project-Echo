@@ -129,6 +129,7 @@ public class PlayerController : MonoBehaviour
 
     void OnJumpPressed(InputAction.CallbackContext context)
     {
+        
         if (!CanJump) return;
 
         isJumping = true;
@@ -136,6 +137,7 @@ public class PlayerController : MonoBehaviour
         lastGroundedTime = -1f;
         lastGroundContactTime = -1f;
 
+        Debug.Log("Jump");
         Vector2 velocity = rb.linearVelocity;
         velocity.y = jumpSpeed;
         rb.linearVelocity = velocity;
