@@ -1,116 +1,66 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 
-[RequireComponent(typeof(Collider2D))]
-public class Checkpoint : MonoBehaviour
+public class Checkpoint : InteractableBase
 {
-    [Header("References")]
+    [Header("Checkpoint")]
     [Tooltip("Optional. Where the player respawns. Uses this object's position if empty.")]
     [SerializeField] private Transform respawnPoint;
-    [Tooltip("Optional. Shown while the player is in range, e.g. a 'Press E' text object.")]
-    [SerializeField] private GameObject interactPrompt;
-    [SerializeField] private SpriteRenderer spriteRenderer;
 
     [Header("Visuals")]
     [SerializeField] private Color inactiveColor = Color.gray;
     [SerializeField] private Color activeColor = new Color(1f, 0.6f, 0.2f);
 
-    private PlayerControls controls;
-    private PlayerController playerInRange;
     private bool isActive;
+    private bool isHighlighted;
 
     public bool IsActive => isActive;
     public Vector3 RespawnPosition => respawnPoint != null ? respawnPoint.position : transform.position;
 
-    // Sets up defaults when the script is first added
-    void Reset()
-    {
-        GetComponent<Collider2D>().isTrigger = true;
-        spriteRenderer = GetComponent<SpriteRenderer>();
-    }
+    // Shown by InteractionPromptUI as "Press [E] to rest"
+    public override string Prompt => "rest";
 
-    void Awake()
+    protected override void Awake()
     {
-        controls = new PlayerControls();
+        base.Awake();
         UpdateVisual();
-        ShowPrompt(false);
     }
 
-    void OnEnable()
+    // Called by InteractionDetector when the player presses Interact
+    public override void Interact(PlayerController player)
     {
-        controls.Player.Interact.performed += OnInteract;
-        controls.Player.Enable();
-    }
-
-    void OnDisable()
-    {
-        controls.Player.Interact.performed -= OnInteract;
-        controls.Player.Disable();
-    }
-
-    void OnDestroy()
-    {
-        controls.Dispose();
-    }
-
-    // Input
-
-    void OnInteract(InputAction.CallbackContext context)
-    {
-        if (playerInRange == null) return;
-
         if (CheckpointManager.Instance == null)
         {
             Debug.LogWarning("Checkpoint: No CheckpointManager in the scene.");
             return;
         }
 
-        CheckpointManager.Instance.ActivateCheckpoint(this, playerInRange);
+        CheckpointManager.Instance.ActivateCheckpoint(this, player);
     }
 
     // Called by CheckpointManager
-
     public void SetActiveState(bool active)
     {
         isActive = active;
         UpdateVisual();
     }
 
-    // Range Detection
-
-    void OnTriggerEnter2D(Collider2D other)
+    // The base class resets the sprite colour when un-highlighting, so reapply ours
+    public override void SetHighlighted(bool highlighted)
     {
-        PlayerController player = other.GetComponentInParent<PlayerController>();
-        if (player == null) return;
-
-        playerInRange = player;
-        ShowPrompt(true);
+        base.SetHighlighted(highlighted);
+        isHighlighted = highlighted;
+        UpdateVisual();
     }
-
-    void OnTriggerExit2D(Collider2D other)
-    {
-        PlayerController player = other.GetComponentInParent<PlayerController>();
-        if (player == null || player != playerInRange) return;
-
-        playerInRange = null;
-        ShowPrompt(false);
-    }
-
-    // Visuals
 
     void UpdateVisual()
     {
-        if (spriteRenderer != null)
-        {
-            spriteRenderer.color = isActive ? activeColor : inactiveColor;
-        }
-    }
+        if (spriteRenderer == null) return;
 
-    void ShowPrompt(bool show)
-    {
-        if (interactPrompt != null)
+        Color color = isActive ? activeColor : inactiveColor;
+        if (isHighlighted)
         {
-            interactPrompt.SetActive(show);
+            color = Color.Lerp(color, Color.white, 0.35f); // brighter while targeted
         }
+        spriteRenderer.color = color;
     }
 }
