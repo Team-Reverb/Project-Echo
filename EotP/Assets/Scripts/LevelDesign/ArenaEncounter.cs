@@ -1,58 +1,123 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
-// Locks the player in until every enemy in the list is dead, then opens the gates.
-// Setup: put this on an empty "Arena" object with a BoxCollider2D set to Is Trigger.
-// Keep the trigger a few tiles INSIDE the gates so the player is fully in before they close.
-// Gates: objects with a sprite and solid BoxCollider2D placed in the arena openings.
-// Enemies: place them in the arena; this script hides them until the fight starts.
-[RequireComponent(typeof(BoxCollider2D))]
+// Souls-style arena: the player enters through an ArenaEntrance and the exits stay sealed
+// until every enemy is dead. Dying resets the fight so it has to be entered again.
 public class ArenaEncounter : MonoBehaviour
 {
-    [Tooltip("Gates that seal the arena while the fight is on.")]
-    public GameObject[] gates;
-
-    [Tooltip("Enemies for this fight. Counted as dead once destroyed or disabled.")]
-    public GameObject[] enemies;
-
-    enum State { Waiting, Fighting, Cleared }
-    State state = State.Waiting;
-
-    void Reset()
+    [Serializable]
+    public class EnemySpawn
     {
-        GetComponent<BoxCollider2D>().isTrigger = true;
+        public GameObject prefab;
+        public Transform point;
     }
 
+    public enum State { Waiting, Fighting, Cleared }
+
+    [Tooltip("Where the player is placed when they enter the arena.")]
+    [SerializeField] private Transform entryPoint;
+    [Tooltip("Gates that block the way forward until the arena is cleared.")]
+    [SerializeField] private GameObject[] gates;
+    [Tooltip("Enemies spawned each time the fight starts. Counted as dead once destroyed or disabled.")]
+    [SerializeField] private EnemySpawn[] enemySpawns;
+
+    public event Action Cleared;
+    public State CurrentState { get; private set; } = State.Waiting;
+    public bool CanBegin => CurrentState == State.Waiting;
+
+    private readonly List<GameObject> spawned = new List<GameObject>();
+
+    // Start (not Awake) so CheckpointManager.Instance is already set
     void Start()
     {
-        SetGates(false);
-        foreach (var e in enemies)
-            if (e) e.SetActive(false);
+        SetGates(true);
+        if (CheckpointManager.Instance != null)
+            CheckpointManager.Instance.PlayerRespawned += ResetArena;
     }
 
-    void OnTriggerEnter2D(Collider2D other)
+    void OnDestroy()
     {
-        if (state != State.Waiting || !other.CompareTag("Player")) return;
+        if (CheckpointManager.Instance != null)
+            CheckpointManager.Instance.PlayerRespawned -= ResetArena;
+    }
 
-        state = State.Fighting;
-        SetGates(true);
-        foreach (var e in enemies)
-            if (e) e.SetActive(true);
+    // Called by ArenaEntrance
+    public void Begin(PlayerController player)
+    {
+        if (!CanBegin) return;
+
+        MovePlayer(player);
+        CurrentState = State.Fighting;
+        SpawnEnemies();
     }
 
     void Update()
     {
-        if (state != State.Fighting) return;
+        if (CurrentState != State.Fighting) return;
 
-        foreach (var e in enemies)
-            if (e && e.activeInHierarchy) return; // someone's still alive
+        foreach (GameObject enemy in spawned)
+            if (enemy != null && enemy.activeInHierarchy) return; // someone's still alive
 
-        state = State.Cleared;
+        Clear();
+    }
+
+    void Clear()
+    {
+        CurrentState = State.Cleared;
         SetGates(false);
+        Cleared?.Invoke();
+    }
+
+    // Player died during the fight: remove leftover enemies so it can be entered again
+    void ResetArena()
+    {
+        if (CurrentState != State.Fighting) return;
+
+        DespawnEnemies();
+        CurrentState = State.Waiting;
+    }
+
+    void SpawnEnemies()
+    {
+        foreach (EnemySpawn spawn in enemySpawns)
+        {
+            if (spawn.prefab == null || spawn.point == null) continue;
+            spawned.Add(Instantiate(spawn.prefab, spawn.point.position, Quaternion.identity));
+        }
+    }
+
+    void DespawnEnemies()
+    {
+        foreach (GameObject enemy in spawned)
+            if (enemy != null) Destroy(enemy);
+        spawned.Clear();
+    }
+
+    void MovePlayer(PlayerController player)
+    {
+        if (entryPoint == null) return;
+
+        Rigidbody2D rb = player.GetComponent<Rigidbody2D>();
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector2.zero;
+            rb.position = entryPoint.position;
+        }
+        player.transform.position = entryPoint.position;
     }
 
     void SetGates(bool closed)
     {
-        foreach (var g in gates)
-            if (g) g.SetActive(closed);
+        foreach (GameObject gate in gates)
+            if (gate != null) gate.SetActive(closed);
+    }
+
+    [ContextMenu("Debug: Clear Arena")]
+    void DebugClear()
+    {
+        if (CurrentState != State.Fighting) return;
+        DespawnEnemies();
+        Clear();
     }
 }

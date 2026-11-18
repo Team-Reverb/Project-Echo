@@ -643,11 +643,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2638082511113919512, guid: 4210f55364c42424d9d79791d7fe3fec, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 3.82
+      value: 80.32
       objectReference: {fileID: 0}
     - target: {fileID: 2638082511113919512, guid: 4210f55364c42424d9d79791d7fe3fec, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.47
+      value: -25.73
       objectReference: {fileID: 0}
     - target: {fileID: 2638082511113919512, guid: 4210f55364c42424d9d79791d7fe3fec, type: 3}
       propertyPath: m_LocalPosition.z
@@ -827,7 +827,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8513357987261158710, guid: e2be9095986e4864cac20666ac3403b5, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 14.874547
+      value: 77.79
       objectReference: {fileID: 0}
     - target: {fileID: 8513357987261158710, guid: e2be9095986e4864cac20666ac3403b5, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1487,7 +1487,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 403bf248501d78d4188d180f6a4c8e25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FragilePlatforms
-  breakDelay: 3
+  breakDelay: 2
   respawnDelay: 3
   requireContinuousContact: 1
   playerTag: Player
@@ -2612,6 +2612,46 @@ Tilemap:
       m_TileObjectToInstantiateIndex: 65535
       dummyAlignment: 0
       m_AllTileFlags: 1073741825
+  - first: {x: 104, y: -27, z: 0}
+    second:
+      serializedVersion: 2
+      m_TileIndex: 0
+      m_TileSpriteIndex: 0
+      m_TileMatrixIndex: 0
+      m_TileColorIndex: 0
+      m_TileObjectToInstantiateIndex: 65535
+      dummyAlignment: 0
+      m_AllTileFlags: 1073741825
+  - first: {x: 105, y: -27, z: 0}
+    second:
+      serializedVersion: 2
+      m_TileIndex: 0
+      m_TileSpriteIndex: 0
+      m_TileMatrixIndex: 0
+      m_TileColorIndex: 0
+      m_TileObjectToInstantiateIndex: 65535
+      dummyAlignment: 0
+      m_AllTileFlags: 1073741825
+  - first: {x: 106, y: -27, z: 0}
+    second:
+      serializedVersion: 2
+      m_TileIndex: 0
+      m_TileSpriteIndex: 0
+      m_TileMatrixIndex: 0
+      m_TileColorIndex: 0
+      m_TileObjectToInstantiateIndex: 65535
+      dummyAlignment: 0
+      m_AllTileFlags: 1073741825
+  - first: {x: 107, y: -27, z: 0}
+    second:
+      serializedVersion: 2
+      m_TileIndex: 0
+      m_TileSpriteIndex: 0
+      m_TileMatrixIndex: 0
+      m_TileColorIndex: 0
+      m_TileObjectToInstantiateIndex: 65535
+      dummyAlignment: 0
+      m_AllTileFlags: 1073741825
   - first: {x: 387, y: -10, z: 0}
     second:
       serializedVersion: 2
@@ -3655,15 +3695,15 @@ Tilemap:
   m_AnimatedTiles: {}
   m_TileAssetArray:
   - serializedVersion: 2
-    m_RefCount: 206
+    m_RefCount: 210
     m_Data: {fileID: 11400000, guid: 6d731a270dacff444a643c3829e497a4, type: 2}
   m_TileSpriteArray:
   - serializedVersion: 2
-    m_RefCount: 206
+    m_RefCount: 210
     m_Data: {fileID: 7482667652216324306, guid: 109ee43a52c06bc4b94f4692f2622aac, type: 3}
   m_TileMatrixArray:
   - serializedVersion: 2
-    m_RefCount: 206
+    m_RefCount: 210
     m_Data:
       e00: 1
       e01: 0
@@ -3683,7 +3723,7 @@ Tilemap:
       e33: 1
   m_TileColorArray:
   - serializedVersion: 2
-    m_RefCount: 206
+    m_RefCount: 210
     m_Data: {r: 1, g: 1, b: 1, a: 1}
   m_TileObjectToInstantiateArray: []
   m_AnimationFrameRate: 1
@@ -82136,6 +82176,63 @@ Tilemap:
     e31: 0
     e32: 0
     e33: 1
+--- !u!1001 &8496522849636051660
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 8230431934067096578, guid: 4c11127b2b341704f98387a6c7a1faba, type: 3}
+      propertyPath: m_Name
+      value: Arena
+      objectReference: {fileID: 0}
+    - target: {fileID: 8826025492233068389, guid: 4c11127b2b341704f98387a6c7a1faba, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 105
+      objectReference: {fileID: 0}
+    - target: {fileID: 8826025492233068389, guid: 4c11127b2b341704f98387a6c7a1faba, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -18.88
+      objectReference: {fileID: 0}
+    - target: {fileID: 8826025492233068389, guid: 4c11127b2b341704f98387a6c7a1faba, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8826025492233068389, guid: 4c11127b2b341704f98387a6c7a1faba, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8826025492233068389, guid: 4c11127b2b341704f98387a6c7a1faba, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8826025492233068389, guid: 4c11127b2b341704f98387a6c7a1faba, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8826025492233068389, guid: 4c11127b2b341704f98387a6c7a1faba, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8826025492233068389, guid: 4c11127b2b341704f98387a6c7a1faba, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8826025492233068389, guid: 4c11127b2b341704f98387a6c7a1faba, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8826025492233068389, guid: 4c11127b2b341704f98387a6c7a1faba, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 4c11127b2b341704f98387a6c7a1faba, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -82151,3 +82248,4 @@ SceneRoots:
   - {fileID: 1005981892}
   - {fileID: 273453131}
   - {fileID: 587534762}
+  - {fileID: 8496522849636051660}

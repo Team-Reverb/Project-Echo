@@ -4,6 +4,8 @@ public class CheckpointManager : MonoBehaviour
 {
     public static CheckpointManager Instance { get; private set; }
 
+    public event System.Action PlayerRespawned;
+
     [Header("References")]
     [SerializeField] private PlayerController player;
 
@@ -66,6 +68,7 @@ public class CheckpointManager : MonoBehaviour
         }
         player.transform.position = respawnPosition;
         player.Heal(player.MaxHealth);
+        PlayerRespawned?.Invoke();
     }
 
     void OnDestroy()
