@@ -75,7 +75,6 @@ public class FragilePlatforms : MonoBehaviour
 
     private void OnCollisionStay2D(Collision2D collision)
     {
-        Debug.Log($"Touching: {collision.collider.name}, tag: {collision.collider.tag}");
         if (!collision.collider.CompareTag(playerTag)) return;
 
         for (int i = 0; i < collision.contactCount; i++)
