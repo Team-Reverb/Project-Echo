@@ -27,6 +27,7 @@ public class HunterAgent : Agent
     
 
     [Header("Debug (turn off for training)")]
+
     public bool DebugLogs = true;
 
     [Header("References")]
@@ -35,7 +36,7 @@ public class HunterAgent : Agent
 
     [Header("Rewards")]
     public float EngagementRadius = 6f;      // outside this, small per-step penalty
-    public float PlayerHitReward = 0.5f;     // reward for making contact with a player when attack is off cooldown
+    public float PlayerHitReward = 1.5f;     // reward for making contact with a player when attack is off cooldown
     public float ScanReward = 0.2f;          // exposed during a pulse and not tagged
     public float ScanGrace = 0.5f;           // seconds after the pulse ends before paying out (>= projectile flight time)
     public float UnrevealedGrace = 11f;      // seconds unrevealed before the hiding penalty starts (~2 pulse cycles)
@@ -70,7 +71,7 @@ public class HunterAgent : Agent
 
     // Combat Related
 
-    private float _lastAttackTime;
+    private float _lastAttackTime = 0;
     private bool _hitPlayer = false; // indicates whether the agent successfully hit the player during its last reveal
     private bool _attackReady = true; // indicates whether or not the agent can currently attack
 
@@ -117,15 +118,16 @@ public class HunterAgent : Agent
         {
             Environment.GenerateEnvironment();
             Physics2D.SyncTransforms();   // new platform transforms -> physics, before OverlapCircle
+            if (_bot != null)
+            {
+                _bot.ResetBot();
+                Physics2D.SyncTransforms();
+            }
+
+            transform.localPosition = FindClearSpawn();
         }
 
-        if (_bot != null)
-        {
-            _bot.ResetBot();
-            Physics2D.SyncTransforms();
-        }
-
-        transform.localPosition = FindClearSpawn();
+        
         _rigidBody.position = transform.position;
         _rigidBody.linearVelocity = Vector2.zero;
 
@@ -253,6 +255,7 @@ public class HunterAgent : Agent
     {
         if (_pulseSource == null) return;
         if (_tagImmunitySteps > 0) _tagImmunitySteps--;
+        if (_attackReady == false && Time.time - _lastAttackTime > _attackCooldown) _attackReady = true;
 
         bool pulseActive = _pulseSource.IsPulseActive;
         _revealed = pulseActive && _pulseSource.CanReveal(transform.position);
@@ -278,7 +281,7 @@ public class HunterAgent : Agent
             if (!_wasTagged)
             {
                 AddReward(ScanReward);
-                if (_hitPlayer) AddReward(ScanReward); // agent will not receive reward for hitting player if they were tagged
+                if (_hitPlayer) AddReward(PlayerHitReward); // agent will not receive reward for hitting player if they were tagged
             }
 
             _scanPayoutTime = -1f;
@@ -312,7 +315,7 @@ public class HunterAgent : Agent
 
     private void OnCollisionEnter2D(Collision2D collision) // on collision with player, if attack is off cooldown, set _hitPlayer to true
     {
-        if (Time.time - _lastAttackTime > _attackCooldown) _attackReady = true;
+        
 
         if (collision.gameObject.CompareTag("Player") && _attackReady)
         {

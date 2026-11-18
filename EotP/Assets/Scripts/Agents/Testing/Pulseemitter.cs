@@ -80,4 +80,10 @@ public class PulseEmitter : MonoBehaviour, IPulseSource
     {
         _pulses.RemoveAll(p => p == null || !p.gameObject.activeInHierarchy);
     }
+
+    // For regular player character
+    public void SetCooldownDuration(float duration)
+    {
+        cooldownDuration = Mathf.Max(0f, duration);
+    }
 }

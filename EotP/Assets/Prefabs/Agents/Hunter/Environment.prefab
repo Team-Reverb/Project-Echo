@@ -626,7 +626,7 @@ MonoBehaviour:
   Player: {fileID: 5641765036292101000}
   Environment: {fileID: 0}
   EngagementRadius: 6
-  PlayerHitReward: 0.8
+  PlayerHitReward: 1.5
   ScanReward: 0.3
   ScanGrace: 0.5
   UnrevealedGrace: 11

@@ -1,16 +1,18 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using Unity.Collections;
+using Unity.InferenceEngine;
+using Unity.Mathematics;
 using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
+using Unity.MLAgents.Policies;
 using Unity.MLAgents.Sensors;
 using Unity.VisualScripting;
 using UnityEngine;
-using Unity.Collections;
 using UnityEngine.UIElements;
-using System.Collections.Generic;
-using Unity.InferenceEngine;
 using Random = UnityEngine.Random;
-using Unity.Mathematics;
-using Unity.MLAgents.Policies;
-using System.Runtime.CompilerServices;
 
 public  class State
 {
@@ -145,9 +147,35 @@ public class BiterAgent : Agent
         else ChangeState(0);
 
         OriginalPosition = transform.position;
-  
+
+        if (Environment == null)
+            Environment = transform.parent.gameObject;
+
 
         _rigidBody = GetComponent<Rigidbody2D>();
+
+
+        NPCHealthComponent healthComponent = GetComponent<NPCHealthComponent>();
+        if (healthComponent != null)
+        {
+            IEnumerator FlashRed()
+            {
+                if (_renderer == null) yield break;      
+                _renderer.color = Color.red;               
+                yield return new WaitForSeconds(.15f);
+                _renderer.color = Color.gray; 
+            }
+
+            void damage() // when biter is damaged
+            {
+                IEnumerator co = FlashRed();
+                StartCoroutine(co);            
+            }
+            void death() { Destroy(gameObject);  } // when biter is killed
+
+            healthComponent.DamageAction = (Action)damage;
+            healthComponent.DeathAction = (Action)death;
+        }
 
 
     }
