@@ -6,7 +6,7 @@ public class PlayerController : MonoBehaviour
 {
     // Inspector Variables
 
-    [Header("References")]
+    // [Header("References")]
     // public EchoPulse echoPulsePrefab;
 
     [Header("Movement Variables")]
